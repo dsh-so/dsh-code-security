@@ -393,7 +393,13 @@ window.__ModuleLoader__.load({
 
 		const STATUS_META = {
 			completed: { key: "status.completed", color: theme.ok },
-			failed: { key: "status.failed", color: theme.danger },
+			// Fixed fill, NOT theme.danger (= var(--dsw-alias-label-error)): label-*
+			// aliases are TEXT-role tokens (they flip light in dark theme), so a label
+			// token as badge fill under white text is exactly the issue #2 trap.
+			// --dsw-alias-label-error is not an official DSH token today (the alias
+			// catalog only has --dsw-alias-state-error-primary), so var() currently
+			// resolves to nothing — but if DSH ever ships it, it would flip light.
+			failed: { key: "status.failed", color: "#e03131" },
 			running: { key: "status.running", color: theme.warn },
 			never: { key: "status.never", color: theme.muted },
 		};
