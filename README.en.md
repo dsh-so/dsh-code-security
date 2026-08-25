@@ -28,14 +28,29 @@ its own credentials).
 
 ## Quick Start
 
-**Option 1: npm package (recommended)** — the native command installs and
-activates it as a profile bundle layer:
+Installation = two fixed commands: **① mount the gate into the profile,
+② place the preset into the user preset root** — no scripts involved:
+
+**From a local checkout (current stage)**
+
+```powershell
+# Windows (PowerShell, inside the project directory)
+dsh plugin --profile web add .
+Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux
+dsh plugin --profile web add .
+cp -R preset ~/.dsh/.agent-presets/dsh-security
+```
+
+**After the npm package is published**: ① uses the package name and needs no
+clone; ② copies from the package already installed inside the profile:
 
 ```bash
 dsh plugin --profile web add @dsh-so/dsh-code-security   # ① installs + mounts the gate (requires pnpm)
 ```
-
-Then place the preset into the user preset root per platform convention (②):
 
 ```powershell
 # Windows (PowerShell)
@@ -47,25 +62,7 @@ Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-
 cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
 ```
 
-> Override the target profile with `DSH_PROFILE` (default `web`; adjust the
-> `profiles/web` path segment above accordingly); override the DSH home
-> directory with `DSH_HOME` (macOS/Linux).
-
-**Option 2: one-line script inside a checkout** — the same
-`dsh plugin --profile web add` under the hood (local-directory form; the junction
-points at the checkout, so do not delete it afterwards). Runs both steps above in
-one go, including automatic legacy two-package migration:
-
-```powershell
-git clone https://github.com/ihuajiu/dsh-code-security
-cd dsh-code-security
-.\install.ps1          # macOS/Linux: ./install.sh
-```
-
-From the local checkout, the script installs the "Security Audit Mode" preset
-to `~/.dsh/.agent-presets/dsh-security` and mounts the **dsh-code-security bundle**
-(audit gate panel + batch audit tools) into the web profile. **Idempotent** —
-re-running is safe.
+> Requires `pnpm` (for the bundle installation).
 
 What to do after installation:
 
@@ -194,17 +191,21 @@ actually enforces the policy it claims). Complementary to this project: it verif
 
 ## Uninstall
 
-Run from the project checkout (removes preset + gate + state/cache; idempotent,
-safe to re-run):
+Two reverse commands:
 
 ```powershell
-# Windows (inside the checkout)
-.\uninstall.ps1
+# Windows
+dsh plugin --profile web remove @dsh-so/dsh-code-security
+Remove-Item -Recurse -Force "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
 ```
 
 ```bash
-# macOS / Linux (inside the checkout)
-./uninstall.sh
+# macOS / Linux
+dsh plugin --profile web remove @dsh-so/dsh-code-security
+rm -rf ~/.dsh/.agent-presets/dsh-security
+```
+
+> Legacy leftovers (two-package / script installs): `dsh plugin --profile web remove dsh-security-gate dsh-security-tools`; old state dir `<DSH_HOME>/dsh-security` and old cache `<DSH_HOME>/cache/dsh-code-security` can be deleted manually.
 ```
 
 ## Project Structure
@@ -223,7 +224,6 @@ dsh-code-security/
 │   └── plugins/dsh-security/index.js  # 5 dsh_security_* tools
 ├── docs/                     # gate.en/zh.md detailed gate docs + local working docs
 ├── assets/                   # README images (UI screenshots + logo)
-├── install.ps1 / install.sh / uninstall.*
 └── README.md / README.en.md
 ```
 
@@ -251,7 +251,8 @@ npm install dsh-code-security
   automatically; manual migration: run
   `dsh plugin --profile web remove dsh-security-gate dsh-security-tools`, then
   reinstall per above.
-- Local development install (offline/intranet): `.\install.ps1` / `./install.sh`;
+- Local development install = the two commands under "Quick Start"; full gate
+  configuration table: [`docs/gate.en.md`](docs/gate.en.md).
   full gate configuration table: [`docs/gate.en.md`](docs/gate.en.md).
 
 ## License & Naming

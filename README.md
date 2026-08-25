@@ -22,13 +22,27 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
 
 ## 快速开始
 
-**方式一：npm 包（推荐）** —— 原生命令装包并激活为 profile 组合层：
+安装 = 固定两条命令：**①门禁挂载进 profile，②预设放入用户预设根**（无需任何脚本）：
+
+**从本地 checkout 安装（当前阶段）**
+
+```powershell
+# Windows（PowerShell，在项目目录内）
+dsh plugin --profile web add .
+Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux
+dsh plugin --profile web add .
+cp -R preset ~/.dsh/.agent-presets/dsh-security
+```
+
+**npm 包发布后**：①改用包名、无需克隆仓库；②从已装入 profile 的包内复制：
 
 ```bash
 dsh plugin --profile web add @dsh-so/dsh-code-security   # ① 装包 + 挂载门禁（需已安装 pnpm）
 ```
-
-预设再按平台规范放入用户预设根（②）：
 
 ```powershell
 # Windows（PowerShell）
@@ -40,20 +54,7 @@ Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-
 cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
 ```
 
-> 目标 profile 可用 `DSH_PROFILE` 环境变量覆盖（默认 `web`；需同步调整上面路径里的
-> `profiles/web` 段）；macOS/Linux 下 DSH 主目录可用 `DSH_HOME` 覆盖。
-
-**方式二：checkout 一键脚本** —— 内部同样走 `dsh plugin --profile web add`（本地目录形式，junction 指向 checkout，装后请勿删除该目录），一条命令完成上面两步并自动迁移旧双包安装：
-
-```powershell
-git clone https://github.com/ihuajiu/dsh-code-security
-cd dsh-code-security
-.\install.ps1          # macOS/Linux: ./install.sh
-```
-
-脚本把「安全审计模式」预设复制到 `~/.dsh/.agent-presets/dsh-security`、
-把 **dsh-code-security 组合包**（门禁面板 + 批量审计工具）挂载进 web profile。
-**幂等**，重复执行安全。
+> 需要已安装 `pnpm`（组合包安装用）。
 
 装完怎么用：
 
@@ -168,16 +169,22 @@ config，需列全字段；改动在 DSH 重启后生效）：
 
 ## 卸载
 
-从项目 checkout 运行（清预设 + 门禁 + 状态/缓存，幂等可重跑）：
+两条反向命令：
 
 ```powershell
-# Windows（checkout 内）
-.\uninstall.ps1
+# Windows
+dsh plugin --profile web remove @dsh-so/dsh-code-security
+Remove-Item -Recurse -Force "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
 ```
 
 ```bash
-# macOS / Linux（checkout 内）
-./uninstall.sh
+# macOS / Linux
+dsh plugin --profile web remove @dsh-so/dsh-code-security
+rm -rf ~/.dsh/.agent-presets/dsh-security
+```
+
+> 旧版（双包 / 脚本安装）残留清理：`dsh plugin --profile web remove dsh-security-gate dsh-security-tools`；旧状态目录 `<DSH_HOME>/dsh-security`、旧缓存 `<DSH_HOME>/cache/dsh-code-security` 可手动删除。
+```
 ```
 
 ## 项目结构
@@ -196,7 +203,6 @@ dsh-code-security/
 │   └── plugins/dsh-security/index.js  # 5 个 dsh_security_* 工具
 ├── docs/                     # gate.zh/en.md 门禁详细文档 + 本地工作文档（不入库）
 ├── assets/                   # README 配图（界面截图 + logo）
-├── install.ps1 / install.sh / uninstall.*
 └── README.md / README.en.md
 ```
 
@@ -221,7 +227,8 @@ npm install dsh-code-security
   自动迁移到新包；手动迁移：先
   `dsh plugin --profile web remove dsh-security-gate dsh-security-tools`，
   再按上方命令重装。
-- 本地开发安装（离线/内网）：`.\install.ps1` / `./install.sh`；门禁完整配置表见
+- 本地开发安装即「快速开始」的「从本地 checkout 安装」两条命令；门禁完整配置表见
+  [`docs/gate.zh.md`](docs/gate.zh.md)。
   [`docs/gate.zh.md`](docs/gate.zh.md)。
 
 ## 许可证与命名
