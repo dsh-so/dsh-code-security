@@ -5,6 +5,8 @@
 <!-- 徽章位：npm 发布后恢复动态徽章 -->
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![DSH](https://img.shields.io/badge/DSH-0.1.1--rc.2-blue)](https://github.com/ihuajiu/dsh-code-security)
+[![dsh.so risk](https://www.dsh.so/badge/dsh-code-security.svg)](https://www.dsh.so/artifact/dsh-code-security/)
+[![dsh.so install](https://www.dsh.so/badge/install/dsh-code-security.svg)](https://www.dsh.so/artifact/dsh-code-security/)
 
 > **审计你安装的插件；武装扫描代码的会话。**
 >
