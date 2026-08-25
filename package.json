@@ -33,7 +33,7 @@
     "cordis.patch.yml",
     "preset",
     "README.md",
-    "README.en.md"
+    "README.zh.md"
   ],
   "publishConfig": {
     "access": "public"
