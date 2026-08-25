@@ -36,7 +36,7 @@ Harness (DSH). Not an official OpenAI product and not affiliated with OpenAI (`C
 One package, two layers living at different levels of the harness:
 
 ```mermaid
-flowchart TB
+flowchart LR
   PKG["@dsh-so/dsh-code-security<br/>one package = gate code + settings panel + preset tree"]
   PKG ==>|"step 1 - required"| GATE
   PKG -.->|"step 2 - optional"| MODE
@@ -71,10 +71,10 @@ flowchart TB
 
 ## Installation
 
-Two steps — **step ② is optional**: whether you want the in-session security scanning capability
+Two steps — **step 2 is optional**: whether you want the in-session security scanning capability
 is up to you.
 
-### ① Mount the gate (required)
+### 1. Mount the gate (required)
 
 Process-level protection takes effect immediately: auto static audit of newly installed plugins,
 the "Settings → Security Audit" panel, audit reports.
@@ -93,7 +93,7 @@ dsh plugin --profile web add @dsh-so/dsh-code-security
 > Requires `pnpm`. Activate chain: pnpm install → the manifest records `dsh.profile.bundles` →
 > next boot composes the bundle layer and mounts the plugin (row id `dsh-security-gate`).
 
-### ② Unlock "Security Audit Mode" (optional)
+### 2. Unlock "Security Audit Mode" (optional)
 
 Adds a selectable session capability for **new sessions**: 13 Codex Security workflow skills +
 5 `dsh_security_*` session tools. The gate keeps every feature without it — add whenever needed.
@@ -202,7 +202,7 @@ Single npm package since 0.2.0 (Apache-2.0): one artifact carries the gate host 
 settings panel, the Security-Audit-Mode preset and the full bundled payload (107 files; the
 in-package integrity check keeps passing). `package.json` declares `dsh.bundle.patch`, so
 `dsh plugin add` appends it to the profile bundles layer stack automatically; the preset still
-goes into `~/.dsh/.agent-presets/` per platform convention (see step ② above).
+goes into `~/.dsh/.agent-presets/` per platform convention (see step 2 above).
 
 Legacy packages `dsh-security-gate` / `dsh-security-tools` are retired; installs migrate by
 removing them and adding this package.

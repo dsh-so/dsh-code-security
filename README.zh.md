@@ -33,12 +33,12 @@ DeepSeek Harness（DSH）安全审计插件。非 OpenAI 官方产品，与其�
 一个包，两层能力，分别活在 DSH 的不同层级：
 
 ```mermaid
-flowchart TB
+flowchart LR
   PKG["@dsh-so/dsh-code-security<br/>一个包 = 门禁代码 + 设置面板 + 预设树"]
-  PKG ==>|"第①步 必装"| GATE
-  PKG -.->|"第②步 可选"| MODE
+  PKG ==>|"第 1 步 必装"| GATE
+  PKG -.->|"第 2 步 可选"| MODE
 
-  subgraph GATE["第①层 门禁 / 进程级 / 常驻"]
+  subgraph GATE["第 1 层 门禁 / 进程级 / 常驻"]
     direction LR
     ADD["dsh plugin --profile web add"] --> NM["profile 的 node_modules<br/>+ dsh.profile.bundles 登记"]
     NM --> BOOT["启动：composeProfile<br/>应用 bundle 补丁层"]
@@ -49,7 +49,7 @@ flowchart TB
     G --> PANEL["双语设置面板<br/>（client.js）"]
   end
 
-  subgraph MODE["第②层 安全审计模式 / 会话级 / 可选"]
+  subgraph MODE["第 2 层 安全审计模式 / 会话级 / 可选"]
     direction LR
     COPY["preset/ 复制到<br/>~/.dsh/.agent-presets/dsh-security"] --> PICK["新会话选择该预设"]
     PICK --> SKILLS["13 个 Codex Security 工作流技能<br/>（skill-filesystem）"]
@@ -67,9 +67,9 @@ flowchart TB
 
 ## 安装
 
-分两步，**第②步可选**——是否需要会话内的安全扫描能力，由你决定：
+分两步，**第 2 步可选**——是否需要会话内的安全扫描能力，由你决定：
 
-### ① 挂载门禁（必装）
+### 1. 挂载门禁（必装）
 
 进程级防护立即生效：新装插件自动静态审计、「设置 → 安全审计」面板、审计报告。
 
@@ -87,7 +87,7 @@ dsh plugin --profile web add @dsh-so/dsh-code-security
 > 需要已安装 `pnpm`。生效链路：pnpm 安装 → 清单登记 `dsh.profile.bundles` → 下次启动组合
 > bundles 层挂载插件（行 id `dsh-security-gate`）。
 
-### ② 解锁「安全审计模式」（可选）
+### 2. 解锁「安全审计模式」（可选）
 
 为**新会话**增加一套可选择的会话能力：13 个 Codex Security 工作流技能 + 5 个 `dsh_security_*`
 会话工具。不装不影响门禁的任何功能；想用时随时补这一步。
@@ -192,7 +192,7 @@ dsh-code-security/
 自 0.2.0 起为单一 npm 包（Apache-2.0）：一个工件同时携带门禁宿主插件、设置面板、「安全审计
 模式」预设与完整 bundled 载荷（107 文件，包内完整性校验照常通过）。`package.json` 声明
 `dsh.bundle.patch`，`dsh plugin add` 自动把它追加进 profile bundles 层栈；预设仍按平台规范
-放入 `~/.dsh/.agent-presets/`（即上方第②步）。
+放入 `~/.dsh/.agent-presets/`（即上方第 2 步）。
 
 旧包 `dsh-security-gate` / `dsh-security-tools` 已退役：卸载旧包后加装本包即完成迁移。
 
