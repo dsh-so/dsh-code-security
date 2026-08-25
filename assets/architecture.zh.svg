@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="600" viewBox="0 0 880 600" font-family="Segoe UI, Microsoft YaHei, system-ui, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#57606a"/></marker>
+  </defs>
+  <rect x="230" y="14" width="420" height="54" rx="11" fill="#ddf4ff" stroke="#0969da" stroke-width="1.4"/>
+  <text x="440" y="37" text-anchor="middle" font-size="16" font-weight="700" fill="#0550ae">@dsh-so/dsh-code-security</text>
+  <text x="440" y="56" text-anchor="middle" font-size="12" fill="#454c54">一个包 = 门禁代码 + 设置面板 + 预设树</text>
+  <path d="M350,72 C320,100 250,106 214,112" fill="none" stroke="#0969da" stroke-width="2.4" marker-end="url(#a)"/>
+  <text x="128" y="102" font-size="12" font-weight="700" fill="#0969da">第 1 步 · 必装</text>
+  <path d="M530,72 C560,100 632,106 664,112" fill="none" stroke="#57606a" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a)"/>
+  <text x="592" y="102" font-size="12" font-weight="600" fill="#57606a">第 2 步 · 可选</text>
+
+  <rect x="26" y="120" width="400" height="464" rx="13" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="42" y="147" font-size="13.5" font-weight="700" fill="#1f2328">第 1 层 · 门禁</text>
+  <text x="146" y="147" font-size="11.5" fill="#57606a">进程级 / 常驻</text>
+  <rect x="48" y="160" width="356" height="34" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="226" y="181" text-anchor="middle" font-size="11.8" font-family="ui-monospace, Consolas, monospace" fill="#24292f">dsh plugin --profile web add</text>
+  <line x1="226" y1="196" x2="226" y2="206" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="48" y="210" width="356" height="38" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="226" y="226" text-anchor="middle" font-size="11.8" fill="#24292f">profile 的 node_modules</text>
+  <text x="226" y="241" text-anchor="middle" font-size="11.8" fill="#24292f">+ 登记进 dsh.profile.bundles</text>
+  <line x1="226" y1="250" x2="226" y2="260" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="48" y="264" width="356" height="34" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="226" y="285" text-anchor="middle" font-size="11.8" fill="#24292f">启动：composeProfile 应用 bundle 补丁层</text>
+  <line x1="226" y1="300" x2="226" y2="310" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="48" y="314" width="356" height="36" rx="8" fill="#0969da" stroke="#0969da"/>
+  <text x="226" y="336" text-anchor="middle" font-size="12.2" font-weight="600" fill="#ffffff">门禁插件（index.js）</text>
+  <line x1="226" y1="352" x2="226" y2="362" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="48" y="368" width="172" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="134" y="386" text-anchor="middle" font-size="11.8" fill="#24292f">自动审计新装插件</text>
+  <text x="134" y="401" text-anchor="middle" font-size="11.3" fill="#57606a">宿主 llm · 零认证</text>
+  <rect x="232" y="368" width="172" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="318" y="386" text-anchor="middle" font-size="11.8" fill="#24292f">audit-baseline.json</text>
+  <text x="318" y="401" text-anchor="middle" font-size="11.3" fill="#57606a">历轮甄别记忆</text>
+  <rect x="48" y="420" width="172" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="134" y="438" text-anchor="middle" font-size="11.8" fill="#24292f">报告与 summary.json</text>
+  <text x="134" y="453" text-anchor="middle" font-size="11.3" fill="#57606a">DSH_HOME/dsh-security</text>
+  <rect x="232" y="420" width="172" height="44" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="318" y="438" text-anchor="middle" font-size="11.8" fill="#24292f">双语设置面板</text>
+  <text x="318" y="453" text-anchor="middle" font-size="11.3" fill="#57606a">设置 → 安全审计</text>
+  <rect x="48" y="480" width="356" height="86" rx="8" fill="#fff8e6" stroke="#d4a72c"/>
+  <text x="226" y="502" text-anchor="middle" font-size="11.8" fill="#24292f"><tspan font-weight="700">诚实边界：</tspan>只审计进入 profile 的插件；</text>
+  <text x="226" y="521" text-anchor="middle" font-size="11.8" fill="#24292f">不会自行拦截或改写任何东西；</text>
+  <text x="226" y="540" text-anchor="middle" font-size="11.8" fill="#24292f">不监控你自己源码的运行时行为。</text>
+
+  <rect x="454" y="120" width="400" height="464" rx="13" fill="#fbfefa" stroke="#d0d7de"/>
+  <text x="470" y="147" font-size="13.5" font-weight="700" fill="#1f2328">第 2 层 · 安全审计模式</text>
+  <text x="838" y="147" text-anchor="end" font-size="11.5" fill="#57606a">会话级 / 可选</text>
+  <rect x="476" y="160" width="356" height="34" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="654" y="181" text-anchor="middle" font-size="11.2" font-family="ui-monospace, Consolas, monospace" fill="#24292f">preset/ -&gt; ~/.dsh/.agent-presets/dsh-security</text>
+  <line x1="654" y1="196" x2="654" y2="206" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="476" y="210" width="356" height="34" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="654" y="231" text-anchor="middle" font-size="11.8" fill="#24292f">新建会话选择该预设</text>
+  <line x1="654" y1="246" x2="654" y2="256" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="476" y="260" width="172" height="56" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="562" y="279" text-anchor="middle" font-size="11.8" font-weight="600" fill="#24292f">13 个工作流技能</text>
+  <text x="562" y="294" text-anchor="middle" font-size="11.3" fill="#57606a">Codex Security 套件</text>
+  <text x="562" y="308" text-anchor="middle" font-size="11.3" fill="#57606a">经 skill-filesystem 注入</text>
+  <rect x="660" y="260" width="172" height="56" rx="8" fill="#0969da" stroke="#0969da"/>
+  <text x="746" y="279" text-anchor="middle" font-size="11.8" font-weight="600" fill="#ffffff">5 个 dsh_security_* 工具</text>
+  <text x="746" y="294" text-anchor="middle" font-size="11.3" fill="#dbeaff">scan / findings / resources</text>
+  <text x="746" y="308" text-anchor="middle" font-size="11.3" fill="#dbeaff">compare / cli</text>
+  <line x1="562" y1="318" x2="562" y2="330" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="746" y1="318" x2="746" y2="330" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="476" y="334" width="356" height="52" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="654" y="353" text-anchor="middle" font-size="11.8" font-weight="600" fill="#24292f">@openai/codex-security CLI</text>
+  <text x="654" y="368" text-anchor="middle" font-size="11.3" fill="#57606a">字面量引用 · 工作目录围栏 · 白名单 · 超时上限</text>
+  <line x1="654" y1="388" x2="654" y2="400" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="476" y="404" width="356" height="34" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="654" y="425" text-anchor="middle" font-size="11.8" fill="#24292f">会话内深度安全扫描与分析</text>
+  <rect x="476" y="480" width="356" height="86" rx="8" fill="#fff8e6" stroke="#d4a72c" stroke-dasharray="5 3"/>
+  <text x="654" y="502" text-anchor="middle" font-size="11.8" fill="#24292f"><tspan font-weight="700">由 fail-closed 完整性校验守护：</tspan></text>
+  <text x="654" y="521" text-anchor="middle" font-size="11.8" fill="#24292f">107 文件 SHA-256 清单 —— 任一失配，</text>
+  <text x="654" y="540" text-anchor="middle" font-size="11.8" fill="#24292f">即禁用工具而非加载。</text>
+</svg>
