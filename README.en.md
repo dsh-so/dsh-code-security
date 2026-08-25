@@ -28,47 +28,55 @@ its own credentials).
 
 ## Quick Start
 
-Installation = two fixed commands: **① mount the gate into the profile,
-② place the preset into the user preset root** — no scripts involved:
+Installation has two steps — **step ② is optional**: whether you want the
+in-session security scanning capability is up to you:
 
-**From a local checkout (current stage)**
+## ① Mount the gate (required)
 
-```powershell
-# Windows (PowerShell, inside the project directory)
+Process-level protection takes effect immediately: auto static audit of newly
+installed plugins, the "Settings → Security Audit" panel, audit reports.
+
+```bash
+# From a local checkout (current stage; run inside the project directory)
 dsh plugin --profile web add .
-Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
 ```
+
+Once the npm package is published, use the package name instead (no clone needed):
 
 ```bash
-# macOS / Linux
-dsh plugin --profile web add .
-cp -R preset ~/.dsh/.agent-presets/dsh-security
-```
-
-**After the npm package is published**: ① uses the package name and needs no
-clone; ② copies from the package already installed inside the profile:
-
-```bash
-dsh plugin --profile web add @dsh-so/dsh-code-security   # ① installs + mounts the gate (requires pnpm)
-```
-
-```powershell
-# Windows (PowerShell)
-Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
-```
-
-```bash
-# macOS / Linux
-cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 ```
 
 > Requires `pnpm` (for the bundle installation).
 
+## ② Unlock the "Security Audit Mode" preset (optional)
+
+Adds a selectable session capability for **new sessions**: 13 Codex Security
+workflow skills + 5 `dsh_security_*` session tools (for AI-driven scans and
+analysis in conversation). The gate keeps every feature without it — add this
+step whenever you need it.
+
+Place `preset/` into the user preset root (pick the source matching your install):
+
+```powershell
+# Windows — source A: local checkout
+Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+# source B: in-package copy after npm install
+Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux — source A: local checkout
+cp -R preset ~/.dsh/.agent-presets/dsh-security
+# source B: in-package copy
+cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+```
+
 What to do after installation:
 
 1. **Restart DSH**
-2. New session → select the "Security Audit Mode" preset in the preset picker,
-   then scan any repository
+2. (Optional, requires step ②) New session → select "Security Audit Mode" in the
+   preset picker to run in-session security scans
 3. Open **Settings → Security Audit** panel to see the gate's auto-audit status
    and reports
 

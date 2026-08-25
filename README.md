@@ -22,44 +22,51 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
 
 ## 快速开始
 
-安装 = 固定两条命令：**①门禁挂载进 profile，②预设放入用户预设根**（无需任何脚本）：
+安装分两步，**第②步可选**——是否需要会话内的安全扫描能力，由你决定：
 
-**从本地 checkout 安装（当前阶段）**
+## ① 挂载门禁（必装）
 
-```powershell
-# Windows（PowerShell，在项目目录内）
+进程级防护立即生效：新装插件自动静态审计、「设置 → 安全审计」面板、审计报告。
+
+```bash
+# 从本地 checkout 安装（当前阶段；在项目目录内执行）
 dsh plugin --profile web add .
-Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
 ```
+
+npm 包发布后，改用包名即可（无需克隆仓库）：
 
 ```bash
-# macOS / Linux
-dsh plugin --profile web add .
-cp -R preset ~/.dsh/.agent-presets/dsh-security
-```
-
-**npm 包发布后**：①改用包名、无需克隆仓库；②从已装入 profile 的包内复制：
-
-```bash
-dsh plugin --profile web add @dsh-so/dsh-code-security   # ① 装包 + 挂载门禁（需已安装 pnpm）
-```
-
-```powershell
-# Windows（PowerShell）
-Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
-```
-
-```bash
-# macOS / Linux
-cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 ```
 
 > 需要已安装 `pnpm`（组合包安装用）。
 
+## ② 解锁「安全审计模式」预设（可选）
+
+为**新会话**增加一套可选择的会话能力：13 个 Codex Security 工作流技能 +
+5 个 `dsh_security_*` 会话工具（供 AI 在对话中执行安全扫描/分析）。不装不影响
+门禁的任何功能；想用时随时补这一步。
+
+把 `preset/` 放入用户预设根（复制源按你的安装方式二选一）：
+
+```powershell
+# Windows —— 源 A：本地 checkout
+Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+# Windows —— 源 B：npm 安装后的包内副本
+Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux —— 源 A：本地 checkout
+cp -R preset ~/.dsh/.agent-presets/dsh-security
+# 源 B：包内副本
+cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+```
+
 装完怎么用：
 
 1. **重启 DSH**
-2. 新建会话 → 预设选择器选「安全审计模式」，即可扫描仓库
+2. （可选，需第②步）新建会话 → 预设选择器选「安全审计模式」，即可在会话内做安全扫描
 3. 打开 **设置 → 安全审计** 面板，查看门禁自动审计的状态与报告
 
 > **没装成功？** 最常见原因是缺少 `pnpm`。先执行 `npm install -g pnpm`，再重跑安装脚本。
