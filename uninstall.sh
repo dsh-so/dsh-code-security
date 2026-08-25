@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Uninstall the openai-code-security DSH plugin project (dsh-code-security):
-#   1. the bundle (+ legacy dsh-security-gate/tools) — removed from EVERY
-#      the current scoped name plus legacy names, orphan node_modules symlinks,
+# Uninstall the dsh-code-security DSH plugin:
+#   1. the dsh-code-security bundle (+ legacy dsh-security-gate/tools) —
+#      removed from EVERY profile: `dsh plugin remove` for the current package
+#      name plus legacy names; also cleans orphan node_modules
+#      symlinks,
 #      any stale manual cordis.patch.yml row, and a defensive strip from the
 #      profile bundle list.
 #   2. dsh-security agent preset  -> $DSH_HOME/.agent-presets/dsh-security
 #   3. gate state/reports         -> $DSH_HOME/dsh-security
-#   4. online-install cache clone -> $DSH_HOME/cache/dsh-code-security
+#   4. legacy online-install cache clone -> $DSH_HOME/cache/dsh-code-security
 # Idempotent: re-running is safe; anything already gone is skipped. Cleanup
 # continues past errors (no set -e).
 set -u

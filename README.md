@@ -22,29 +22,27 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
 
 ## 快速开始
 
-**一条命令在线安装，然后重启 DSH。** 无需克隆项目、无需手动拷贝任何文件：
+**方式一（推荐）：checkout 内一键脚本** —— 从本地检出安装全部组件：
 
 ```powershell
-# Windows（PowerShell）
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.ps1 | iex
+git clone https://github.com/ihuajiu/dsh-code-security
+cd dsh-code-security
+.\install.ps1          # macOS/Linux: ./install.sh
 ```
+
+**方式二：npm 包（0.2.0 发布后）** —— 原生命令装包并激活为 profile 组合层：
 
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.sh | bash
+dsh plugin --profile web add dsh-code-security
+# 预设需另按平台规范放入用户预设根（一键脚本会自动完成这步）
 ```
 
-> 🔒 **安全说明**：远程脚本经管道交给 shell 执行是这类一键安装的标准方式（nvm、rustup 等
-> 同样如此）。安装器会克隆仓库到本地缓存后运行，**不会以 root 执行、不请求提权**；如不放心，
-> 可先 `curl -fsSL <上面的地址> -o install.sh` 下载后人工审阅，再 `bash install.sh`。
+脚本从本地 checkout 把「安全审计模式」预设复制到 `~/.dsh/.agent-presets/dsh-security`、
+把 **dsh-code-security 组合包**（门禁面板 + 批量审计工具）挂载进 web profile。
+**幂等**，重复执行安全；旧版两包安装会自动迁移到新包。
 
-脚本自动：下载项目到持久缓存（`~/.dsh/cache/dsh-code-security`）、安装
-「安全审计模式」预设、把 **dsh-code-security 组合包**（门禁面板 + 批量审计工具）挂载进
-web profile。**幂等**，重复执行安全；旧版两包安装会自动迁移到新包。
-
-> 需要已安装 `git`（下载用）与 `pnpm`（门禁安装用）。仓库地址可自定义：
-> Windows 设 `$env:DSH_CODE_SECURITY_REPO_URL`，macOS/Linux 设
-> `DSH_CODE_SECURITY_REPO_URL` 环境变量（镜像场景）。
+> 需要已安装 `pnpm`（组合包安装用）。目标 profile 可用 `DSH_PROFILE` 环境变量覆盖
+> （默认 `web`）；DSH 主目录可用 `DSH_HOME` 覆盖（macOS/Linux）。
 
 装完怎么用：
 
@@ -159,19 +157,17 @@ config，需列全字段；改动在 DSH 重启后生效）：
 
 ## 卸载
 
-**一条命令**（清预设 + 门禁 + 状态/缓存，幂等可重跑）：
+从项目 checkout 运行（清预设 + 门禁 + 状态/缓存，幂等可重跑）：
 
 ```powershell
-# Windows
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.ps1 | iex
+# Windows（checkout 内）
+.\uninstall.ps1
 ```
 
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.sh | bash
+# macOS / Linux（checkout 内）
+./uninstall.sh
 ```
-
-> 🔒 与安装相同，可先下载审阅再执行：`curl -fsSL <上面的地址> -o uninstall.sh && bash uninstall.sh`。
 
 ## 项目结构
 

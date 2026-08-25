@@ -28,35 +28,32 @@ its own credentials).
 
 ## Quick Start
 
-**One-line online install, then restart DSH.** No need to clone the project or
-manually copy any files:
+**Option 1 (recommended): one-line script inside a checkout** — installs every
+component from a local clone:
 
 ```powershell
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.ps1 | iex
+git clone https://github.com/ihuajiu/dsh-code-security
+cd dsh-code-security
+.\install.ps1          # macOS/Linux: ./install.sh
 ```
+
+**Option 2: npm package (after 0.2.0 is published)** — the native command installs
+and activates it as a profile bundle layer:
 
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.sh | bash
+dsh plugin --profile web add dsh-code-security
+# The preset still needs to go into ~/.dsh/.agent-presets/ per platform
+# convention (the script does this step automatically).
 ```
 
-> 🔒 **Security note**: piping a remote script into the shell is the standard
-> pattern for this kind of one-line install (nvm, rustup, etc. do the same). The
-> installer clones the repository into a local cache before running; it does
-> **not** execute as root and never requests privilege elevation. If you are not
-> comfortable with that, download it for manual review first
-> (`curl -fsSL <URL above> -o install.sh`) and then run `bash install.sh`.
+From the local checkout, the script installs the "Security Audit Mode" preset to
+`~/.dsh/.agent-presets/dsh-security` and mounts the **dsh-code-security bundle**
+(audit gate panel + batch audit tools) into the web profile. **Idempotent** —
+re-running is safe; legacy two-package installs are migrated automatically.
 
-The script automatically: downloads the project to a persistent cache
-(~/.dsh/cache/dsh-code-security), installs the "Security Audit Mode" preset, and
-mounts the **dsh-code-security bundle** (audit gate panel + batch audit tools)
-into the web profile. **Idempotent** — re-running is safe; legacy two-package
-installs are migrated to the new package automatically.
-
-> Requires `git` (for downloading) and `pnpm` (for the gate installation). The
-> repository URL can be customized: set `$env:DSH_CODE_SECURITY_REPO_URL` on
-> Windows or `DSH_CODE_SECURITY_REPO_URL` on macOS/Linux (e.g. for mirrors).
+> Requires `pnpm` (for the bundle installation). Override the target profile with
+> the `DSH_PROFILE` environment variable (default `web`); override the DSH home
+> directory with `DSH_HOME` (macOS/Linux).
 
 What to do after installation:
 
@@ -185,20 +182,18 @@ actually enforces the policy it claims). Complementary to this project: it verif
 
 ## Uninstall
 
-**One command** (removes preset + gate + state/cache; idempotent, safe to re-run):
+Run from the project checkout (removes preset + gate + state/cache; idempotent,
+safe to re-run):
 
 ```powershell
-# Windows
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.ps1 | iex
+# Windows (inside the checkout)
+.\uninstall.ps1
 ```
 
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.sh | bash
+# macOS / Linux (inside the checkout)
+./uninstall.sh
 ```
-
-> 🔒 As with the installer, you can download it for review before executing:
-> `curl -fsSL <URL above> -o uninstall.sh && bash uninstall.sh`.
 
 ## Project Structure
 

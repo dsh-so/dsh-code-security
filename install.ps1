@@ -4,49 +4,20 @@
 #      package declares `dsh.bundle.patch`, so `dsh plugin add` activates it as
 #      a profile bundle layer automatically (gate panel + batch tools mount;
 #      no manual cordis.patch.yml row needed).
+# Run this script FROM A PROJECT CHECKOUT - it installs the LOCAL files.
 # Idempotent: re-running replaces the previous copies and migrates installs of
 # the two legacy packages (dsh-security-gate / dsh-security-tools) away.
-#
-# Run from a project checkout, or piped as one command once the repository is
-# published:  irm <raw-install-url> | iex   (the script then clones the repo
-# itself and re-runs from the clone).
 $ErrorActionPreference = 'Stop'
 
-$repoUrl = if ($env:DSH_CODE_SECURITY_REPO_URL) { $env:DSH_CODE_SECURITY_REPO_URL } else { 'https://github.com/ihuajiu/dsh-code-security' }
 $profileName = if ($env:DSH_PROFILE) { $env:DSH_PROFILE } else { 'web' }
 
 $scriptPath = $MyInvocation.MyCommand.Path
 $src = if ($scriptPath) { Split-Path -Parent $scriptPath } else { '' }
-$hasPayload = $src -and (Test-Path (Join-Path $src 'preset\agent.cordis.yml')) -and (Test-Path (Join-Path $src 'index.js'))
-$dsh = Join-Path $env:USERPROFILE '.dsh'
-
-if (-not $hasPayload) {
-  # Piped mode: fetch the project into a PERSISTENT cache dir first, then
-  # re-run this installer from the clone (`dsh plugin add` installs a file:
-  # dependency whose junction points at the clone — removing it would break
-  # the next `dsh` boot). No `exit`: with `irm ... | iex` the body runs in the
-  # caller's session.
-  if ($repoUrl -match '<owner>') {
-    Write-Error 'install.ps1 must be run from the project checkout, or set DSH_CODE_SECURITY_REPO_URL to the published repository URL.'
-    return
-  }
-  if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Error 'git is required for the piped install — install git (https://git-scm.com) and retry.'
-    return
-  }
-  $cacheDir = Join-Path $dsh 'cache\dsh-code-security'
-  if (Test-Path $cacheDir) { Remove-Item $cacheDir -Recurse -Force }
-  New-Item -ItemType Directory -Path (Split-Path $cacheDir -Parent) -Force | Out-Null
-  Write-Host "Fetching $repoUrl -> $cacheDir ..." -ForegroundColor Cyan
-  git clone --depth 1 "$repoUrl" "$cacheDir"
-  if ($LASTEXITCODE -ne 0) {
-    Write-Error "git clone failed (exit $LASTEXITCODE) — check the repository URL and network access."
-    return
-  }
-  & (Join-Path $cacheDir 'install.ps1') @args
-  $global:LASTEXITCODE = $LASTEXITCODE
+if (-not $src -or -not (Test-Path (Join-Path $src 'preset\agent.cordis.yml')) -or -not (Test-Path (Join-Path $src 'index.js'))) {
+  Write-Error 'install.ps1 must be run from the project checkout (it installs the LOCAL files). Example: git clone https://github.com/ihuajiu/dsh-code-security; cd dsh-code-security; .\install.ps1'
   return
 }
+$dsh = if ($env:DSH_HOME) { $env:DSH_HOME } else { Join-Path $env:USERPROFILE '.dsh' }
 
 # ── 1. agent preset ─────────────────────────────────────────────────────────
 $presetDest = Join-Path $dsh '.agent-presets\dsh-security'
