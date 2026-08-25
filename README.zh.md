@@ -28,6 +28,43 @@ DeepSeek Harness（DSH）安全审计插件。非 OpenAI 官方产品，与其�
 
 ---
 
+## 架构总览
+
+一个包，两层能力，分别活在 DSH 的不同层级：
+
+```mermaid
+flowchart TB
+  PKG["@dsh-so/dsh-code-security<br/>一个包 = 门禁代码 + 设置面板 + 预设树"]
+  PKG ==>|"第①步 必装"| GATE
+  PKG -.->|"第②步 可选"| MODE
+
+  subgraph GATE["第①层 门禁 / 进程级 / 常驻"]
+    direction LR
+    ADD["dsh plugin --profile web add"] --> NM["profile 的 node_modules<br/>+ dsh.profile.bundles 登记"]
+    NM --> BOOT["启动：composeProfile<br/>应用 bundle 补丁层"]
+    BOOT --> G["门禁插件（index.js）"]
+    G --> AUDIT["自动审计新装插件<br/>走宿主 llm 服务 · 零认证"]
+    AUDIT --> MEM["audit-baseline.json<br/>甄别记忆"]
+    AUDIT --> REP["报告与 summary.json<br/>位于 DSH_HOME/dsh-security"]
+    G --> PANEL["双语设置面板<br/>（client.js）"]
+  end
+
+  subgraph MODE["第②层 安全审计模式 / 会话级 / 可选"]
+    direction LR
+    COPY["preset/ 复制到<br/>~/.dsh/.agent-presets/dsh-security"] --> PICK["新会话选择该预设"]
+    PICK --> SKILLS["13 个 Codex Security 工作流技能<br/>（skill-filesystem）"]
+    PICK --> TOOLS["5 个 dsh_security_* 工具"]
+    TOOLS --> CLI["@openai/codex-security CLI<br/>字面量引用 / 工作目录围栏 /<br/>白名单 / 超时上限"]
+    INT["fail-closed 完整性校验<br/>107 文件 SHA-256 清单"] -.->|守护| TOOLS
+  end
+```
+
+- 门禁走的是 **profile 组合包通道**：一条命令永久登记，每次启动都会重新应用它的补丁层。
+- 预设从**用户预设根**（`~/.dsh/.agent-presets/`）发现——这是 DSH 目前唯一的预设放置点，
+  所以复制动作暂时省不掉。
+
+---
+
 ## 安装
 
 分两步，**第②步可选**——是否需要会话内的安全扫描能力，由你决定：

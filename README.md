@@ -31,6 +31,44 @@ Harness (DSH). Not an official OpenAI product and not affiliated with OpenAI (`C
 
 ---
 
+## Architecture
+
+One package, two layers living at different levels of the harness:
+
+```mermaid
+flowchart TB
+  PKG["@dsh-so/dsh-code-security<br/>one package = gate code + settings panel + preset tree"]
+  PKG ==>|"step 1 - required"| GATE
+  PKG -.->|"step 2 - optional"| MODE
+
+  subgraph GATE["Layer 1 - Gate / process level / always-on"]
+    direction LR
+    ADD["dsh plugin --profile web add"] --> NM["profile node_modules<br/>+ dsh.profile.bundles entry"]
+    NM --> BOOT["boot: composeProfile<br/>applies the bundle patch layer"]
+    BOOT --> G["gate plugin (index.js)"]
+    G --> AUDIT["auto-audits newly installed plugins<br/>via the harness llm service - zero auth"]
+    AUDIT --> MEM["audit-baseline.json<br/>triage memory"]
+    AUDIT --> REP["reports + summary.json<br/>under DSH_HOME/dsh-security"]
+    G --> PANEL["bilingual settings panel<br/>(client.js)"]
+  end
+
+  subgraph MODE["Layer 2 - Security Audit Mode / session level / opt-in"]
+    direction LR
+    COPY["preset/ copied to<br/>~/.dsh/.agent-presets/dsh-security"] --> PICK["a new session picks the preset"]
+    PICK --> SKILLS["13 Codex Security workflow skills<br/>(skill-filesystem)"]
+    PICK --> TOOLS["5 dsh_security_* tools"]
+    TOOLS --> CLI["@openai/codex-security CLI<br/>quoting / workdir confinement /<br/>whitelist / timeout caps"]
+    INT["fail-closed integrity<br/>107-file SHA-256 manifest"] -.->|guards| TOOLS
+  end
+```
+
+- The gate rides the **profile bundle channel**: one command registers it permanently; every boot
+  re-applies its patch layer.
+- The preset is discovered from the **user preset root** (`~/.dsh/.agent-presets/`) — currently the
+  only placement point DSH exposes for presets, hence the manual copy.
+
+---
+
 ## Installation
 
 Two steps — **step ② is optional**: whether you want the in-session security scanning capability
