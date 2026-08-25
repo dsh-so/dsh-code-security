@@ -241,10 +241,15 @@ window.__ModuleLoader__.load({
 				transition: "background .12s ease, border-color .12s ease",
 			},
 			buttonHover: { background: theme.bgCardHover, borderColor: theme.label3 },
+			// Primary action uses the platform's theme-paired semantic pair instead of
+			// brand-primary: brand-primary is an INVERTED alias (light theme = bluish-1000,
+			// dark theme = bluish-50), so a hardcoded light text color turns white-on-white
+			// in dark theme, and brand-primary-invert does NOT pair with it (identical
+			// values per theme). See dsh-code-security issue #2.
 			buttonPrimary: {
-				border: "none",
-				background: theme.accent,
-				color: "#fff",
+				border: "1px solid var(--dsw-alias-border-l2, #e4e4e7)",
+				background: "var(--dsw-alias-button-elevated-fill, #f4f4f5)",
+				color: "var(--dsw-alias-label-primary, #1a1a1a)",
 				borderRadius: "8px",
 				padding: "6px 12px",
 				fontSize: "12.5px",
@@ -858,7 +863,10 @@ window.__ModuleLoader__.load({
 					onMouseLeave: function (ev) { ev.currentTarget.style.borderColor = theme.border; },
 				},
 					react.createElement("div", { style: styles.cardRow },
-						react.createElement("div", { style: Object.assign({}, styles.avatar, { background: KIND_COLOR[p.kind] || theme.accent }) }, initial),
+						// Fallback stays a FIXED brand tone: the initial renders white, and the
+					// accent alias flips near-white in dark theme (issue #2). #2f6fed matches
+					// the package entry in KIND_COLOR.
+					react.createElement("div", { style: Object.assign({}, styles.avatar, { background: KIND_COLOR[p.kind] || "#2f6fed" }) }, initial),
 						react.createElement("div", { style: styles.identity },
 							react.createElement("div", { style: styles.name }, p.id),
 							react.createElement("div", { style: styles.keyLine }, e.key)),
