@@ -30,7 +30,7 @@ case "$dsh" in
   *) printf 'uninstall: install root "%s" is not an absolute path\n' "$dsh" >&2; exit 1 ;;
 esac
 
-names='dsh-code-security dsh-security-gate dsh-security-tools openai-code-security-gate @dsh.so/dsh-security-gate @dsh.so/dsh-security-tools'
+names='@dsh-so/dsh-code-security dsh-code-security dsh-security-gate dsh-security-tools openai-code-security-gate @dsh.so/dsh-security-gate @dsh.so/dsh-security-tools'
 
 # node is always present (DSH runs on it) — use it for exact manifest reads.
 has_dep() { node -e 'const fs=require("fs"),j=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));process.stdout.write((j.dependencies&&j.dependencies[process.argv[2]])?"1":"0")' "$1" "$2" 2>/dev/null; }

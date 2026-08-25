@@ -1,8 +1,8 @@
 # dsh-code-security profile bundle patch.
 #
 # `package.json` declares `dsh.bundle.patch: ./cordis.patch.yml`, so
-# `dsh plugin --profile <name> add dsh-code-security` installs this package
-# into the profile AND appends `dsh-code-security` to the profile's
+# `dsh plugin --profile <name> add @dsh-so/dsh-code-security` installs this package
+# into the profile AND appends `@dsh-so/dsh-code-security` to the profile's
 # `dsh.profile.bundles` layer stack; this patch then inserts the plugin row.
 # No manual `cordis.patch.yml` row is needed.
 #
@@ -23,4 +23,4 @@
 #       sandboxMode: danger-full-access
 - insert:
     - id: dsh-security-gate
-      name: 'dsh-code-security'
+      name: '@dsh-so/dsh-code-security'

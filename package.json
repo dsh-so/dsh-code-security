@@ -1,5 +1,5 @@
 {
-  "name": "dsh-code-security",
+  "name": "@dsh-so/dsh-code-security",
   "version": "0.2.0",
   "type": "module",
   "main": "./index.js",

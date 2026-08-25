@@ -44,7 +44,7 @@ cp -R "$src/preset/." "$preset_dest/"
 profile_dir="$dsh/profiles/$profile_name"
 if [ -f "$profile_dir/package.json" ]; then
   # Migrate legacy two-package installs out of the way first (best effort).
-  for legacy in dsh-security-gate dsh-security-tools; do
+  for legacy in @dsh-so/dsh-code-security dsh-code-security dsh-security-gate dsh-security-tools; do
     ( cd "$profile_dir" && dsh plugin --profile "$profile_name" remove "$legacy" ) >/dev/null 2>&1 || true
   done
   echo "Installing dsh-code-security bundle into profile $profile_name"

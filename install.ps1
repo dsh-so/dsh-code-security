@@ -30,7 +30,7 @@ Copy-Item -Path (Join-Path $src 'preset\*') -Destination $presetDest -Recurse -F
 $profileDir = Join-Path $dsh ("profiles\" + $profileName)
 if (Test-Path (Join-Path $profileDir 'package.json')) {
   # Migrate legacy two-package installs out of the way first (best effort).
-  foreach ($legacy in @('dsh-security-gate', 'dsh-security-tools')) {
+  foreach ($legacy in @('@dsh-so/dsh-code-security', 'dsh-code-security', 'dsh-security-gate', 'dsh-security-tools')) {
     Push-Location $profileDir
     try { & 'dsh' plugin --profile $profileName remove $legacy *> $null } catch {} finally { Pop-Location }
   }

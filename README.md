@@ -2,7 +2,7 @@
 
 > **[English](README.en.md) | 中文**
 
-> 产品展示名：**dsh-code-security**；技术标识：宿主插件 `dsh-security-gate`、
+> 产品展示名：**dsh-code-security**（npm 包名 `@dsh-so/dsh-code-security`）；技术标识：宿主插件 `dsh-security-gate`、
 > agent preset `dsh-security`、工具 `dsh_security_*`。仓库目录名沿用
 > `openai-code-security`（历史来源）。
 
@@ -33,7 +33,7 @@ cd dsh-code-security
 **方式二：npm 包（0.2.0 发布后）** —— 原生命令装包并激活为 profile 组合层：
 
 ```bash
-dsh plugin --profile web add dsh-code-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 # 预设需另按平台规范放入用户预设根（一键脚本会自动完成这步）
 ```
 
@@ -197,7 +197,7 @@ bundled 载荷（107 文件，包内完整性校验照常通过）：
 
 ```bash
 # 官方通道：装包 + 自动激活为 profile bundle 层（推荐）
-dsh plugin --profile web add dsh-code-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 # 或仅拉取 npm 包（不激活组合层）
 npm install dsh-code-security
 ```

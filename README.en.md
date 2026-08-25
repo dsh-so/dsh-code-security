@@ -2,7 +2,7 @@
 
 > **English | [中文](README.md)**
 
-> Product display name: **dsh-code-security**; technical identifiers: host plugin
+> Product display name: **dsh-code-security** (npm package `@dsh-so/dsh-code-security`); technical identifiers: host plugin
 > `dsh-security-gate`, agent preset `dsh-security`, tools `dsh_security_*`.
 > The repository folder keeps its historical name `openai-code-security`.
 
@@ -41,7 +41,7 @@ cd dsh-code-security
 and activates it as a profile bundle layer:
 
 ```bash
-dsh plugin --profile web add dsh-code-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 # The preset still needs to go into ~/.dsh/.agent-presets/ per platform
 # convention (the script does this step automatically).
 ```
@@ -224,7 +224,7 @@ the in-package integrity check keeps passing):
 
 ```bash
 # Official channel: installs AND activates as a profile bundle layer (recommended)
-dsh plugin --profile web add dsh-code-security
+dsh plugin --profile web add @dsh-so/dsh-code-security
 # Or just fetch the npm package (no bundle layer activated)
 npm install dsh-code-security
 ```

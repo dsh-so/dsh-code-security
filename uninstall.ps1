@@ -34,7 +34,7 @@ if (('' + $dsh).TrimEnd('/', '\') -eq '') {
   exit 1
 }
 
-$names = @('dsh-code-security', 'dsh-security-gate', 'dsh-security-tools', 'openai-code-security-gate', '@dsh.so/dsh-security-gate', '@dsh.so/dsh-security-tools')
+$names = @('@dsh-so/dsh-code-security', 'dsh-code-security', 'dsh-security-gate', 'dsh-security-tools', 'openai-code-security-gate', '@dsh.so/dsh-security-gate', '@dsh.so/dsh-security-tools')
 
 # ── 1. gate plugin from every profile ───────────────────────────────────────
 $profilesDir = Join-Path $dsh 'profiles'
