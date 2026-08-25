@@ -1,3 +1,8 @@
+
+> **This document focuses on the gate's usage, configuration and security design.** For
+> installation/uninstallation see the root README ("Quick Start" / "Uninstall") — two native
+> commands, no scripts. npm package name: `@dsh-so/dsh-code-security`; the plugin row id
+> `dsh-security-gate` is unchanged, existing override patches keep working.
 ﻿# dsh-code-security (Security Audit Plugin)
 
 > **English | [中文](README.md)**
@@ -25,48 +30,6 @@ adopted neutral naming).
 routing as the session), so no external API keys are needed. Optional
 `engine: 'cli'` runs the official OpenAI Codex Security scanner (which requires
 its own credentials).
-
-## Quick Start
-
-**One-line online install, then restart DSH.** No need to clone the project or
-manually copy any files:
-
-```powershell
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.ps1 | iex
-```
-
-```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.sh | bash
-```
-
-> 🔒 **Security note**: piping a remote script into the shell is the standard
-> pattern for this kind of one-line install (nvm, rustup, etc. do the same). The
-> installer clones the repository into a local cache before running; it does
-> **not** execute as root and never requests privilege elevation. If you are not
-> comfortable with that, download it for manual review first
-> (`curl -fsSL <URL above> -o install.sh`) and then run `bash install.sh`.
-
-The script automatically: downloads the project to a persistent cache
-(`~/.dsh/cache/dsh-code-security`), installs the "Security Audit Mode" preset, and
-mounts the "Security Audit Gate" into the web profile. **Idempotent** — re-running
-is safe; legacy manual config rows from older versions are migrated automatically.
-
-> Requires `git` (for downloading) and `pnpm` (for the gate installation). The
-> repository URL can be customized: set `$env:DSH_CODE_SECURITY_REPO_URL` on
-> Windows or `DSH_CODE_SECURITY_REPO_URL` on macOS/Linux (e.g. for mirrors).
-
-What to do after installation:
-
-1. **Restart DSH**
-2. New session → select the "Security Audit Mode" preset in the preset picker,
-   then scan any repository
-3. Open **Settings → Security Audit** panel to see the gate's auto-audit status
-   and reports
-
-> **Install didn't work?** The most common cause is missing `pnpm`. Run
-> `npm install -g pnpm` first, then re-run the install script.
 
 ## Usage
 
@@ -181,67 +144,6 @@ document and is not shipped with the repository.
 actually enforces the policy it claims). Complementary to this project: it verifies
 "does the configured policy actually wire up" (fail = don't ship), while we review
 "is the plugin source risky" (flag = human review).
-
-## Uninstall
-
-**One command** (removes preset + gate + state/cache; idempotent, safe to re-run):
-
-```powershell
-# Windows
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.ps1 | iex
-```
-
-```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.sh | bash
-```
-
-> 🔒 As with the installer, you can download it for review before executing:
-> `curl -fsSL <URL above> -o uninstall.sh && bash uninstall.sh`.
-
-## Project Structure
-
-```
-openai-code-security/
-├── gate/                   # Security gate host plugin dsh-security-gate
-│   ├── index.js            #   zero-dependency cordis plugin
-│   ├── client.js           #   Settings "Security Audit" panel (bilingual)
-│   ├── cordis.patch.yml    #   bundle patch (auto-mounted by dsh plugin add)
-│   ├── audit-baseline.json #   triage memory across audit rounds
-│   └── README.md
-├── agent.cordis.yml        # preset composition (standard + dsh-security additions)
-├── preset.yml              # preset metadata
-├── plugins/dsh-security/   # tool plugin dsh-security-tools (5 dsh_security_*)
-├── skills/dsh-security/    # DSH adapter entry skill
-├── bundled/                # upstream _bundled_plugin copy (skills/references/schemas/scripts/mcp)
-├── docs/                   # security audit report / plugin recommendation / GitHub discussion post
-├── assets/                 # README images (UI screenshots + logo)
-├── install.ps1 / install.sh / uninstall.*
-└── README.md / README.en.md
-```
-
-## Development & Publishing
-
-Both components are published to npmjs (Apache-2.0):
-
-```bash
-npm install dsh-security-gate      # security gate host plugin
-npm install dsh-security-tools     # security audit mode tool plugin (bundled payload included)
-```
-
-- Plain unscoped npm package names — installing, referencing, and upgrading
-  requires nothing special; the tools package ships the bundled payload (107
-  files) in-package, and the integrity check passes in the in-package layout as
-  well.
-- **Legacy names deprecated**: the previously published `@dsh.so/dsh-security-gate`
-  and `@dsh.so/dsh-security-tools` are marked deprecated on npm (message:
-  "renamed to dsh-security-gate" / "renamed to dsh-security-tools"); install the
-  unscoped names above for new installs.
-- **npm install ≠ plugin activation**: the gate still needs to be mounted into a
-  profile (`dsh plugin --profile web add ...`), and the preset still needs to go
-  into `~/.dsh/.agent-presets/`. The one-line scripts are recommended for end users.
-- Local development install (offline/intranet): `.\install.ps1` / `./install.sh`;
-  manual installation: see [`gate/README.md`](https://github.com/ihuajiu/dsh-code-security/blob/main/gate/README.md) (in Chinese).
 
 ## License & Naming
 

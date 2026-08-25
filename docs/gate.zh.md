@@ -1,5 +1,9 @@
 # dsh-code-security（安全审计插件）
 
+> **本文档聚焦门禁的使用、配置与安全设计。** 安装/卸载见仓库根目录 README 的「快速开始」「卸载」
+> （两条原生命令，无需脚本）；npm 包名为 `@dsh-so/dsh-code-security`。文中行 id `dsh-security-gate`
+> 保持不变，既有覆盖补丁仍然有效。
+
 > **[English](README.en.md) | 中文**
 
 > 产品展示名：**dsh-code-security**；技术标识：宿主插件 `dsh-security-gate`、
@@ -19,40 +23,6 @@ DeepSeek Harness（DSH）**安全审计插件项目**，包含两个组件。项
 
 **默认零认证**：两条路径都使用宿主 `llm` 服务（同会话模型路由），无需任何外部
 API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其自身认证）。
-
-## 快速开始
-
-**一条命令在线安装，然后重启 DSH。** 无需克隆项目、无需手动拷贝任何文件：
-
-```powershell
-# Windows（PowerShell）
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.ps1 | iex
-```
-
-```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/install.sh | bash
-```
-
-> 🔒 **安全说明**：远程脚本经管道交给 shell 执行是这类一键安装的标准方式（nvm、rustup 等
-> 同样如此）。安装器会克隆仓库到本地缓存后运行，**不会以 root 执行、不请求提权**；如不放心，
-> 可先 `curl -fsSL <上面的地址> -o install.sh` 下载后人工审阅，再 `bash install.sh`。
-
-脚本自动：下载项目到持久缓存（`~/.dsh/cache/dsh-code-security`）、安装
-「安全审计模式」预设、把「安全审计门禁」挂载进 web profile。**幂等**，重复执行安全；
-旧版本遗留的手动配置行会自动迁移。
-
-> 需要已安装 `git`（下载用）与 `pnpm`（门禁安装用）。仓库地址可自定义：
-> Windows 设 `$env:DSH_CODE_SECURITY_REPO_URL`，macOS/Linux 设
-> `DSH_CODE_SECURITY_REPO_URL` 环境变量（镜像场景）。
-
-装完怎么用：
-
-1. **重启 DSH**
-2. 新建会话 → 预设选择器选「安全审计模式」，即可扫描仓库
-3. 打开 **设置 → 安全审计** 面板，查看门禁自动审计的状态与报告
-
-> **没装成功？** 最常见原因是缺少 `pnpm`。先执行 `npm install -g pnpm`，再重跑安装脚本。
 
 ## 使用
 
@@ -159,63 +129,6 @@ config，需列全字段；改动在 DSH 重启后生效）：
 静态、确定性、无 LLM 的沙箱策略一致性审计（读取 `cordis.patch.yml` / profile 配置，
 检查各工具的沙箱接线是否真的落实所声称的策略）。与本项目互补：它管"配置声称的策略
 是否真的接线"（fail = 不发布），我们管"插件源码是否有风险"（flag = 人工复核）。
-
-## 卸载
-
-**一条命令**（清预设 + 门禁 + 状态/缓存，幂等可重跑）：
-
-```powershell
-# Windows
-irm https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.ps1 | iex
-```
-
-```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/uninstall.sh | bash
-```
-
-> 🔒 与安装相同，可先下载审阅再执行：`curl -fsSL <上面的地址> -o uninstall.sh && bash uninstall.sh`。
-
-## 项目结构
-
-```
-openai-code-security/
-├── gate/                   # 安全门禁宿主插件 dsh-security-gate
-│   ├── index.js            #   零依赖 cordis 插件
-│   ├── client.js           #   设置页「安全审计」面板（双语）
-│   ├── cordis.patch.yml    #   bundle 补丁（dsh plugin add 自动挂载）
-│   ├── audit-baseline.json #   历轮审计甄别记忆
-│   └── README.md
-├── agent.cordis.yml        # 预设组合（standard + dsh-security 附加行）
-├── preset.yml              # 预设元数据
-├── plugins/dsh-security/   # 工具插件 dsh-security-tools（5 个 dsh_security_*）
-├── skills/dsh-security/    # DSH 适配入口技能
-├── bundled/                # 上游 _bundled_plugin 拷贝（技能/references/schemas/scripts/mcp）
-├── docs/                   # 本地工作文档（安全审计报告等，不入库，见 .gitignore）
-├── assets/                 # README 配图（界面截图 + logo）
-├── install.ps1 / install.sh / uninstall.*
-└── README.md / README.en.md
-```
-
-## 开发与发布
-
-两个组件已发布到 npmjs（Apache-2.0）：
-
-```bash
-npm install dsh-security-gate      # 安全门禁宿主插件
-npm install dsh-security-tools     # 安全审计模式工具插件（含 bundled 载荷）
-```
-
-- 包名为无 scope 的普通 npm 包名，安装/引用/升级无特殊要求；tools 包
-  bundled 载荷（107 文件）已打进包内，完整性校验在包内布局下照常通过。
-- **旧包名已废弃**：此前发布的 `@dsh.so/dsh-security-gate` 与
-  `@dsh.so/dsh-security-tools` 已在 npm 上标记 deprecated（提示 "renamed to
-  dsh-security-gate" / "renamed to dsh-security-tools"），新安装请使用上面的
-  无 scope 包名。
-- **npm 安装 ≠ 插件生效**：门禁仍需挂载进 profile（`dsh plugin --profile web add ...`），
-  预设仍需放进 `~/.dsh/.agent-presets/`。对最终用户推荐上方的一键脚本。
-- 本地开发安装（离线/内网）：`.\install.ps1` / `./install.sh`；手动安装见
-  [`gate/README.md`](https://github.com/ihuajiu/dsh-code-security/blob/main/gate/README.md)。
 
 ## 许可证与命名
 
