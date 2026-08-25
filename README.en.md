@@ -51,8 +51,10 @@ cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.
 > `profiles/web` path segment above accordingly); override the DSH home
 > directory with `DSH_HOME` (macOS/Linux).
 
-**Option 2: one-line script inside a checkout** — does both steps above in one
-go, including automatic legacy two-package migration:
+**Option 2: one-line script inside a checkout** — the same
+`dsh plugin --profile web add` under the hood (local-directory form; the junction
+points at the checkout, so do not delete it afterwards). Runs both steps above in
+one go, including automatic legacy two-package migration:
 
 ```powershell
 git clone https://github.com/ihuajiu/dsh-code-security

@@ -43,7 +43,7 @@ cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.
 > 目标 profile 可用 `DSH_PROFILE` 环境变量覆盖（默认 `web`；需同步调整上面路径里的
 > `profiles/web` 段）；macOS/Linux 下 DSH 主目录可用 `DSH_HOME` 覆盖。
 
-**方式二：checkout 一键脚本** —— 一条命令完成上面两步，并自动迁移旧双包安装：
+**方式二：checkout 一键脚本** —— 内部同样走 `dsh plugin --profile web add`（本地目录形式，junction 指向 checkout，装后请勿删除该目录），一条命令完成上面两步并自动迁移旧双包安装：
 
 ```powershell
 git clone https://github.com/ihuajiu/dsh-code-security
