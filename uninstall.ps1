@@ -3,14 +3,35 @@
 #      the current scoped name plus legacy names, orphan node_modules junctions,
 #      any stale manual cordis.patch.yml row, and a defensive strip from the
 #      profile bundle list.
-#   2. dsh-security agent preset  -> ~/.dsh/.agent-presets/dsh-security
-#   3. gate state/reports         -> ~/.dsh/dsh-security
-#   4. online-install cache clone -> ~/.dsh/cache/dsh-code-security
+#   2. dsh-security agent preset  -> $DSH_HOME/.agent-presets/dsh-security
+#   3. gate state/reports         -> $DSH_HOME/dsh-security
+#   4. online-install cache clone -> $DSH_HOME/cache/dsh-code-security
+# (install root: $env:DSH_HOME when set, else ~/.dsh; validated + canonicalized)
 # Idempotent: re-running is safe; anything already gone is skipped. Never fails
 # on a missing piece (cleanup continues past errors).
 $ErrorActionPreference = 'Continue'
 
-$dsh = Join-Path $env:USERPROFILE '.dsh'
+$dsh = if (-not [string]::IsNullOrEmpty($env:DSH_HOME)) { $env:DSH_HOME } else { Join-Path $env:USERPROFILE '.dsh' }
+
+# Issue #1 finding 3: never let an unvalidated install root reach Remove-Item.
+# Refuse empty/root/bare-dot forms, canonicalize through symlinks (Resolve-Path),
+# then require an absolute, non-root path.
+$dshTrimmed = ('' + $dsh).TrimEnd('/', '\')
+if ($dshTrimmed -eq '' -or $dshTrimmed -eq '.' -or $dshTrimmed -eq '..') {
+  Write-Error "uninstall: refusing unsafe install root '$dsh'"
+  exit 1
+}
+$resolvedDsh = Resolve-Path -LiteralPath $dsh -ErrorAction SilentlyContinue
+if ($null -ne $resolvedDsh) { $dsh = $resolvedDsh.ProviderPath }
+if (-not [System.IO.Path]::IsPathRooted($dsh)) {
+  Write-Error "uninstall: install root '$dsh' is not an absolute path"
+  exit 1
+}
+if (('' + $dsh).TrimEnd('/', '\') -eq '') {
+  Write-Error "uninstall: refusing install root '$dsh'"
+  exit 1
+}
+
 $names = @('dsh-security-gate', 'openai-code-security-gate', '@dsh.so/dsh-security-gate')
 
 # ── 1. gate plugin from every profile ───────────────────────────────────────

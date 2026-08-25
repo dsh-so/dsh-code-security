@@ -1,6 +1,6 @@
 {
   "name": "dsh-code-security",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "DeepSeek Harness (DSH) security plugin project: auto-audits newly installed plugins with the host model (dsh-security-gate) and provides a security-audit agent preset with Codex Security workflow skills and scan tools (dsh-security-tools).",
   "license": "Apache-2.0",
   "private": true,

@@ -40,6 +40,10 @@
 //      are checksum-verified at load against the manifest below; a mismatch is
 //      surfaced through `dsh_security_resources` so the model never runs a
 //      tampered script.
+//   6. Payload-path exposure. `dsh_security_resources` returns a path-free
+//      virtual listing by default; absolute payload paths require an explicit
+//      `detail:true` call and can be disabled entirely via plugin config
+//      `exposePayloadPaths:false` (issue #1 finding 2).
 //
 // Zero-dependency by design (Node builtins only): a preset subtree loads with
 // ESM resolution rooted at the preset directory, which has no node_modules, so
@@ -47,7 +51,7 @@
 // ToolDefinitions with raw JSON-Schema parameters.
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync, realpathSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { resolve as resolvePath, sep as pathSep, dirname, basename } from 'node:path';
 
@@ -420,6 +424,11 @@ export function apply(ctx, config = {}) {
   const maxForegroundTimeoutMs = config.maxForegroundTimeoutMs ?? 300000;
   // Path confinement for scan/findings path arguments (see resolveTarget).
   const allowTargetsOutsideWorkdir = config.allowTargetsOutsideWorkdir === true;
+  // Payload-path exposure for dsh_security_resources (issue #1 finding 2):
+  // absolute bundled payload paths are handed out ONLY on an explicit
+  // `detail: true` call; an administrator may disable them entirely with
+  // exposePayloadPaths: false (the path-free virtual listing always works).
+  const exposePayloadPaths = config.exposePayloadPaths !== false;
   // Top-level subcommands `dsh_security_cli` may pass through. Scan verbs are
   // deliberately excluded: scans go through dsh_security_scan (path + timeout
   // policy). Extend via config `cliAllowedVerbs`.
@@ -584,11 +593,11 @@ export function apply(ctx, config = {}) {
   register({
     name: 'dsh_security_resources',
     description:
-      'Return the absolute paths of the bundled Codex Security payload shipped with this preset (the upstream workflow skills, references, schemas, examples, and Python scripts). Use it to read a workflow skill\'s referenced documents or to run one of the bundled Python scripts (e.g. resolve_security_md.py) with the python tool. Payload integrity is re-verified on every call; if it fails the tool throws and no paths are returned (bundled scripts must not be run).',
+      'Return the locations of the bundled Codex Security payload shipped with this preset (the upstream workflow skills, references, schemas, examples, and Python scripts). Without detail:true only a path-free virtual directory listing is returned; pass detail:true to get the absolute paths needed to read a workflow skill\'s referenced documents or run one of the bundled Python scripts with the python tool (an administrator may disable absolute paths via plugin config exposePayloadPaths:false). Payload integrity is re-verified on every call; if it fails the tool throws and no paths are returned (bundled scripts must not be run).',
     parameters: {
       type: 'object',
       properties: {
-        detail: { type: 'boolean', description: 'Also list the bundled directories and skill names (default false: just the root paths).' },
+        detail: { type: 'boolean', description: 'Also return the absolute payload paths and per-directory listings (default false: a path-free virtual listing only).' },
       },
     },
     output,
@@ -605,15 +614,35 @@ export function apply(ctx, config = {}) {
             ') — the bundled scripts are untrusted and must NOT be run. Reinstall the preset to restore the pristine payload.'
         );
       }
+      // Path-free response by default (issue #1 finding 2): a prompt-injected
+      // model must not learn the plugin's absolute install location from a
+      // casual resources call. Names + counts only; integrity still enforced.
+      const count = (dir) => {
+        try { return readdirSync(new URL(dir, bundledDirUrl)).length; } catch { return 0; }
+      };
+      const virtualListing = [
+        'bundled payload (virtual listing' +
+          (exposePayloadPaths ? ' — pass detail:true for absolute paths)' : ' — absolute paths disabled by plugin config exposePayloadPaths:false)'),
+        `skills/: ${count('skills/')} item(s)`,
+        `references/: ${count('references/')} item(s)`,
+        `scripts/: ${count('scripts/')} item(s)`,
+        'payload integrity: OK (verified at call time)',
+      ].join('\n');
+      if (args.detail !== true) {
+        return virtualListing;
+      }
+      if (!exposePayloadPaths) {
+        throw new Error(
+          'codex-security: absolute payload paths are disabled (plugin config exposePayloadPaths:false); ' +
+          'only the virtual directory listing is available.'
+        );
+      }
       const paths = {
         bundledDir,
         skillsDir: fileURLToPath(new URL('skills/', bundledDirUrl)),
         referencesDir: fileURLToPath(new URL('references/', bundledDirUrl)),
         scriptsDir: fileURLToPath(new URL('scripts/', bundledDirUrl)),
       };
-      if (args.detail !== true) {
-        return Object.entries(paths).map(([k, v]) => `${k}: ${v}`).join('\n') + '\npayload integrity: OK (verified at call time)';
-      }
       const { readdir } = await import('node:fs/promises');
       const list = (dir) => readdir(dir).catch(() => []);
       const [skills, references, scripts] = await Promise.all([

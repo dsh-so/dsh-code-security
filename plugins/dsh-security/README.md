@@ -1,4 +1,4 @@
-﻿# dsh-code-security（安全审计插件）
+# dsh-code-security（安全审计插件）
 
 > **[English](README.en.md) | 中文**
 
@@ -75,7 +75,7 @@ curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/inst
 | `dsh_security_findings` | 列出已保存扫描的 findings |
 | `dsh_security_scans_compare` | 对比两个扫描 |
 | `dsh_security_cli` | 其它 CLI 子命令透传（白名单；`login`/`export` 默认排除） |
-| `dsh_security_resources` | 返回 bundled 载荷路径 + 完整性校验结果 |
+| `dsh_security_resources` | 默认仅返回 bundled 载荷的虚拟目录列表（不含绝对路径）；`detail:true` 才返回绝对路径（可用 `exposePayloadPaths:false` 关闭）+ 完整性校验结果 |
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="安全审计模式" width="720">
@@ -130,7 +130,9 @@ config，需列全字段；改动在 DSH 重启后生效）：
 ### 预设（`dsh-security`）
 
 技能、工具白名单等见 `agent.cordis.yml`；CLI 工具默认排除 `login`/`export`，
-可用配置 `cliAllowedVerbs` 扩展。
+可用配置 `cliAllowedVerbs` 扩展。`dsh_security_resources` 默认只返回虚拟目录
+列表，绝对载荷路径需显式 `detail:true`，管理员可加配置 `exposePayloadPaths: false`
+整体关闭。
 
 ## 安全设计（要点）
 
@@ -139,6 +141,7 @@ config，需列全字段；改动在 DSH 重启后生效）：
 - **参数安全**：shell 字面量转义（无注入）；路径收敛到工作目录（越界报错）。
 - **白名单**：CLI 子命令白名单、`cliCommand` 白名单 + 版本钉扎、前台超时上限。
 - **载荷完整性 fail-closed**：bundled 107 文件 SHA-256 校验，任一不符插件拒绝加载。
+- **载荷路径最小暴露**：resources 工具默认不向模型返回绝对安装路径（issue #1 加固）。
 - **端点鉴权**：token + Host/Origin 校验 + 限流；报告/扫描/清除均有保护。
 - **甄别记忆**：`audit-baseline.json` 注入审计提示词，避免重复误报。
 

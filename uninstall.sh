@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Uninstall the openai-code-security DSH plugin project (dsh-code-security):
 #   1. dsh-security-gate — removed from EVERY profile: `dsh plugin remove` for
 #      the current scoped name plus legacy names, orphan node_modules symlinks,
@@ -12,6 +12,22 @@
 set -u
 
 dsh="${DSH_HOME:-$HOME/.dsh}"
+
+# Issue #1 finding 3: never let an unvalidated install root reach rm -rf.
+# Refuse empty/root/bare-dot forms, canonicalize through symlinks (a planted
+# link must not redirect the cleanup onto another tree), then require an
+# absolute, non-root path.
+case "${dsh%/}" in
+  ''|/|.|..) printf 'uninstall: refusing unsafe install root "%s"\n' "$dsh" >&2; exit 1 ;;
+esac
+if resolved=$(cd -- "$dsh" 2>/dev/null && pwd -P); then
+  dsh=$resolved
+fi
+case "$dsh" in
+  /*) if [ "${dsh%/}" = "/" ]; then printf 'uninstall: refusing install root "/"\n' >&2; exit 1; fi ;;
+  *) printf 'uninstall: install root "%s" is not an absolute path\n' "$dsh" >&2; exit 1 ;;
+esac
+
 names='dsh-security-gate openai-code-security-gate @dsh.so/dsh-security-gate'
 
 # node is always present (DSH runs on it) — use it for exact manifest reads.

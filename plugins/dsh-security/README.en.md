@@ -1,4 +1,4 @@
-﻿# dsh-code-security (Security Audit Plugin)
+# dsh-code-security (Security Audit Plugin)
 
 > **English | [中文](README.md)**
 
@@ -89,7 +89,7 @@ The 5 tools (all defaulting to the session working directory as `cwd`):
 | `dsh_security_findings` | List findings of saved scans |
 | `dsh_security_scans_compare` | Compare two scans |
 | `dsh_security_cli` | Pass-through for other CLI subcommands (allowlisted; `login`/`export` excluded by default) |
-| `dsh_security_resources` | Return the bundled payload path + integrity verification result |
+| `dsh_security_resources` | Returns a path-free virtual listing of the bundled payload by default; absolute paths require `detail:true` (disable via `exposePayloadPaths:false`) + integrity verification result |
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="Security Audit Mode" width="720">
@@ -153,7 +153,9 @@ Common fields: `engine`, `provider`/`model`, `intervalMs`, `ignorePrefixes`,
 
 Skills, tool allowlists, etc. are defined in `agent.cordis.yml`; the CLI tool
 excludes `login`/`export` by default and can be extended via the
-`cliAllowedVerbs` config.
+`cliAllowedVerbs` config. `dsh_security_resources` returns a path-free virtual
+listing by default; absolute payload paths require an explicit `detail:true`,
+and an administrator can disable them entirely with `exposePayloadPaths: false`.
 
 ## Security Design (Highlights)
 
@@ -166,6 +168,8 @@ excludes `login`/`export` by default and can be extended via the
   pinning, foreground timeout caps.
 - **Payload integrity, fail-closed**: SHA-256 verification of all 107 bundled
   files; the plugin refuses to load if any hash mismatches.
+- **Minimal payload-path exposure**: the resources tool never hands absolute
+  install paths to the model by default (hardened per issue #1).
 - **Endpoint auth**: token + Host/Origin validation + rate limiting; report/scan/
   clear endpoints are all protected.
 - **Triage memory**: `audit-baseline.json` is injected into audit prompts to avoid
