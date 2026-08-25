@@ -1,0 +1,7 @@
+# Payload bytes are pinned by PAYLOAD_CHECKSUMS (fail-closed integrity).
+# Never let git normalize EOLs in these trees, or every fresh Windows
+# checkout (core.autocrlf=true) breaks the hash check and disables the
+# dsh_security_* tools.
+preset/bundled/** -text
+bundled/** -text
+plugins/dsh-security/bundled/** -text
