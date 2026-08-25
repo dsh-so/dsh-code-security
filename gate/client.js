@@ -391,8 +391,14 @@ window.__ModuleLoader__.load({
 			},
 		};
 
+		// Badge fills are FIXED, WCAG-AA-tuned tones for the white 11.5px/600 label:
+		// completed #237a33 5.4:1 - failed #e03131 4.5:1 - running #b35c00 4.7:1 -
+		// never #6b7280 4.8:1. Semantic text-role aliases (label-* and brand-primary)
+		// flip light in dark themes, so as pill backgrounds they are the issue #2
+		// white-on-white trap; theme.ok/warn/muted remain in use where they render
+		// as TEXT on card backgrounds.
 		const STATUS_META = {
-			completed: { key: "status.completed", color: theme.ok },
+			completed: { key: "status.completed", color: "#237a33" },
 			// Fixed fill, NOT theme.danger (= var(--dsw-alias-label-error)): label-*
 			// aliases are TEXT-role tokens (they flip light in dark theme), so a label
 			// token as badge fill under white text is exactly the issue #2 trap.
@@ -400,8 +406,8 @@ window.__ModuleLoader__.load({
 			// catalog only has --dsw-alias-state-error-primary), so var() currently
 			// resolves to nothing — but if DSH ever ships it, it would flip light.
 			failed: { key: "status.failed", color: "#e03131" },
-			running: { key: "status.running", color: theme.warn },
-			never: { key: "status.never", color: theme.muted },
+			running: { key: "status.running", color: "#b35c00" },
+			never: { key: "status.never", color: "#6b7280" },
 		};
 		const KIND_LABEL = { preset: "kind.preset", package: "kind.package", path: "kind.path" };
 		const KIND_COLOR = { preset: "#7048e8", package: "#2f6fed", path: "#0b7285" };
