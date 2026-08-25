@@ -175,6 +175,11 @@ Security analysis: see [`gate/README.md`](gate/README.md) (in Chinese). The full
 audit report (`docs/SECURITY_AUDIT_REPORT.md`) is maintained as a local working
 document and is not shipped with the repository.
 
+> 🔎 **On the dsh.so verification label**: this project's current L5 means exactly
+> **"we loaded it and it runs"** — verified to load and run inside a real DSH
+> session, nothing more; deeper security conclusions come from this repo's own
+> audit gate and `audit-baseline.json`.
+
 **Related project**: [dsh-sandbox-audit](https://github.com/zoahdev/dsh-sandbox-audit)
 — a static, deterministic, no-LLM sandbox-policy consistency audit (reads
 `cordis.patch.yml` / profile config and checks whether each tool's sandbox wiring

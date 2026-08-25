@@ -152,6 +152,8 @@ config，需列全字段；改动在 DSH 重启后生效）：
   <br><em>静态安全扫描结果（启发式标记，非安全审计；详见上文甄别）</em>
 </p>
 
+> 🔎 **关于 dsh.so 验证等级标签**：本项目当前的 L5 含义即 **"we loaded it and it runs"（已加载、可运行）** —— 仅代表插件在真实 DSH 会话中加载并运行通过，不构成更深层的安全审计结论；深度审查以本仓库门禁与 `audit-baseline.json` 为准。
+
 **相关项目**：[dsh-sandbox-audit](https://github.com/zoahdev/dsh-sandbox-audit) ——
 静态、确定性、无 LLM 的沙箱策略一致性审计（读取 `cordis.patch.yml` / profile 配置，
 检查各工具的沙箱接线是否真的落实所声称的策略）。与本项目互补：它管"配置声称的策略
