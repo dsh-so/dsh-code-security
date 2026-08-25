@@ -28,8 +28,31 @@ its own credentials).
 
 ## Quick Start
 
-**Option 1 (recommended): one-line script inside a checkout** — installs every
-component from a local clone:
+**Option 1: npm package (recommended)** — the native command installs and
+activates it as a profile bundle layer:
+
+```bash
+dsh plugin --profile web add @dsh-so/dsh-code-security   # ① installs + mounts the gate (requires pnpm)
+```
+
+Then place the preset into the user preset root per platform convention (②):
+
+```powershell
+# Windows (PowerShell)
+Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux
+cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+```
+
+> Override the target profile with `DSH_PROFILE` (default `web`; adjust the
+> `profiles/web` path segment above accordingly); override the DSH home
+> directory with `DSH_HOME` (macOS/Linux).
+
+**Option 2: one-line script inside a checkout** — does both steps above in one
+go, including automatic legacy two-package migration:
 
 ```powershell
 git clone https://github.com/ihuajiu/dsh-code-security
@@ -37,23 +60,10 @@ cd dsh-code-security
 .\install.ps1          # macOS/Linux: ./install.sh
 ```
 
-**Option 2: npm package (after 0.2.0 is published)** — the native command installs
-and activates it as a profile bundle layer:
-
-```bash
-dsh plugin --profile web add @dsh-so/dsh-code-security
-# The preset still needs to go into ~/.dsh/.agent-presets/ per platform
-# convention (the script does this step automatically).
-```
-
-From the local checkout, the script installs the "Security Audit Mode" preset to
-`~/.dsh/.agent-presets/dsh-security` and mounts the **dsh-code-security bundle**
+From the local checkout, the script installs the "Security Audit Mode" preset
+to `~/.dsh/.agent-presets/dsh-security` and mounts the **dsh-code-security bundle**
 (audit gate panel + batch audit tools) into the web profile. **Idempotent** —
-re-running is safe; legacy two-package installs are migrated automatically.
-
-> Requires `pnpm` (for the bundle installation). Override the target profile with
-> the `DSH_PROFILE` environment variable (default `web`); override the DSH home
-> directory with `DSH_HOME` (macOS/Linux).
+re-running is safe.
 
 What to do after installation:
 

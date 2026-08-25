@@ -22,7 +22,28 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
 
 ## 快速开始
 
-**方式一（推荐）：checkout 内一键脚本** —— 从本地检出安装全部组件：
+**方式一：npm 包（推荐）** —— 原生命令装包并激活为 profile 组合层：
+
+```bash
+dsh plugin --profile web add @dsh-so/dsh-code-security   # ① 装包 + 挂载门禁（需已安装 pnpm）
+```
+
+预设再按平台规范放入用户预设根（②）：
+
+```powershell
+# Windows（PowerShell）
+Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
+```
+
+```bash
+# macOS / Linux
+cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
+```
+
+> 目标 profile 可用 `DSH_PROFILE` 环境变量覆盖（默认 `web`；需同步调整上面路径里的
+> `profiles/web` 段）；macOS/Linux 下 DSH 主目录可用 `DSH_HOME` 覆盖。
+
+**方式二：checkout 一键脚本** —— 一条命令完成上面两步，并自动迁移旧双包安装：
 
 ```powershell
 git clone https://github.com/ihuajiu/dsh-code-security
@@ -30,19 +51,9 @@ cd dsh-code-security
 .\install.ps1          # macOS/Linux: ./install.sh
 ```
 
-**方式二：npm 包（0.2.0 发布后）** —— 原生命令装包并激活为 profile 组合层：
-
-```bash
-dsh plugin --profile web add @dsh-so/dsh-code-security
-# 预设需另按平台规范放入用户预设根（一键脚本会自动完成这步）
-```
-
-脚本从本地 checkout 把「安全审计模式」预设复制到 `~/.dsh/.agent-presets/dsh-security`、
+脚本把「安全审计模式」预设复制到 `~/.dsh/.agent-presets/dsh-security`、
 把 **dsh-code-security 组合包**（门禁面板 + 批量审计工具）挂载进 web profile。
-**幂等**，重复执行安全；旧版两包安装会自动迁移到新包。
-
-> 需要已安装 `pnpm`（组合包安装用）。目标 profile 可用 `DSH_PROFILE` 环境变量覆盖
-> （默认 `web`）；DSH 主目录可用 `DSH_HOME` 覆盖（macOS/Linux）。
+**幂等**，重复执行安全。
 
 装完怎么用：
 
