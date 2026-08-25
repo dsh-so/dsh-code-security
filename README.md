@@ -39,8 +39,8 @@ curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/inst
 > 可先 `curl -fsSL <上面的地址> -o install.sh` 下载后人工审阅，再 `bash install.sh`。
 
 脚本自动：下载项目到持久缓存（`~/.dsh/cache/dsh-code-security`）、安装
-「安全审计模式」预设、把「安全审计门禁」挂载进 web profile。**幂等**，重复执行安全；
-旧版本遗留的手动配置行会自动迁移。
+「安全审计模式」预设、把 **dsh-code-security 组合包**（门禁面板 + 批量审计工具）挂载进
+web profile。**幂等**，重复执行安全；旧版两包安装会自动迁移到新包。
 
 > 需要已安装 `git`（下载用）与 `pnpm`（门禁安装用）。仓库地址可自定义：
 > Windows 设 `$env:DSH_CODE_SECURITY_REPO_URL`，macOS/Linux 设
@@ -122,7 +122,7 @@ config，需列全字段；改动在 DSH 重启后生效）：
 
 常用字段：`engine`、`provider`/`model`、`intervalMs`、`ignorePrefixes`、`cliCommand`、
 `maxHarvestChars`、`maxParallel`、`scanRateLimit`。完整配置表见
-[`gate/README.md`](gate/README.md)。
+[`docs/gate.zh.md`](docs/gate.zh.md)。
 
 > ⚠️ `engine: 'cli'` 必须显式配置 `sandboxMode`（Windows 上为 `danger-full-access`，
 > 等于非受限执行 —— 门禁每次扫描会打强警告，仅在明确信任 CLI 包与被扫插件时使用）。
@@ -142,7 +142,7 @@ config，需列全字段；改动在 DSH 重启后生效）：
 - **端点鉴权**：token + Host/Origin 校验 + 限流；报告/扫描/清除均有保护。
 - **甄别记忆**：`audit-baseline.json` 注入审计提示词，避免重复误报。
 
-安全分析详见 [`gate/README.md`](gate/README.md)；完整安全审计报告
+安全分析详见 [`docs/gate.zh.md`](docs/gate.zh.md)；完整安全审计报告
 （`docs/SECURITY_AUDIT_REPORT.md`）作为本地工作文档维护，不随仓库发布。
 
 静态安全扫描结果（无 Critical / High 发现，余项均为 Info 级正常行为）：
@@ -176,43 +176,46 @@ curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/unin
 ## 项目结构
 
 ```
-openai-code-security/
-├── gate/                   # 安全门禁宿主插件 dsh-security-gate
-│   ├── index.js            #   零依赖 cordis 插件
-│   ├── client.js           #   设置页「安全审计」面板（双语）
-│   ├── cordis.patch.yml    #   bundle 补丁（dsh plugin add 自动挂载）
-│   ├── audit-baseline.json #   历轮审计甄别记忆
-│   └── README.md
-├── agent.cordis.yml        # 预设组合（standard + dsh-security 附加行）
-├── preset.yml              # 预设元数据
-├── plugins/dsh-security/   # 工具插件 dsh-security-tools（5 个 dsh_security_*）
-├── skills/dsh-security/    # DSH 适配入口技能
-├── bundled/                # 上游 _bundled_plugin 拷贝（技能/references/schemas/scripts/mcp）
-├── docs/                   # 本地工作文档（安全审计报告等，不入库，见 .gitignore）
-├── assets/                 # README 配图（界面截图 + logo）
+dsh-code-security/
+├── index.js                  # 安全门禁宿主插件（零依赖 cordis 插件，行 id: dsh-security-gate）
+├── client.js                 # 设置页「安全审计」面板（双语）
+├── audit-baseline.json       # 历轮审计甄别记忆
+├── cordis.patch.yml          # bundle 补丁（dsh plugin add 自动挂载）
+├── preset/                   # 「安全审计模式」预设树
+│   ├── agent.cordis.yml      #   预设组合（standard + dsh-security-tools 行）
+│   ├── preset.yml            #   预设元数据
+│   ├── skills/dsh-security/  #   DSH 适配入口技能
+│   ├── bundled/              #   上游载荷拷贝（技能/references/schemas/scripts/mcp）
+│   └── plugins/dsh-security/index.js  # 5 个 dsh_security_* 工具
+├── docs/                     # gate.zh/en.md 门禁详细文档 + 本地工作文档（不入库）
+├── assets/                   # README 配图（界面截图 + logo）
 ├── install.ps1 / install.sh / uninstall.*
 └── README.md / README.en.md
 ```
 
 ## 开发与发布
 
-两个组件已发布到 npmjs（Apache-2.0）：
+自 **0.2.0** 起合并为**单一 npm 包 / 单一 profile 组合包**（Apache-2.0）——
+一个包同时携带安全门禁宿主插件、设置面板、「安全审计模式」预设与全部
+bundled 载荷（107 文件，包内完整性校验照常通过）：
 
 ```bash
-npm install dsh-security-gate      # 安全门禁宿主插件
-npm install dsh-security-tools     # 安全审计模式工具插件（含 bundled 载荷）
+# 官方通道：装包 + 自动激活为 profile bundle 层（推荐）
+dsh plugin --profile web add dsh-code-security
+# 或仅拉取 npm 包（不激活组合层）
+npm install dsh-code-security
 ```
 
-- 包名为无 scope 的普通 npm 包名，安装/引用/升级无特殊要求；tools 包
-  bundled 载荷（107 文件）已打进包内，完整性校验在包内布局下照常通过。
-- **旧包名已废弃**：此前发布的 `@dsh.so/dsh-security-gate` 与
-  `@dsh.so/dsh-security-tools` 已在 npm 上标记 deprecated（提示 "renamed to
-  dsh-security-gate" / "renamed to dsh-security-tools"），新安装请使用上面的
-  无 scope 包名。
-- **npm 安装 ≠ 插件生效**：门禁仍需挂载进 profile（`dsh plugin --profile web add ...`），
-  预设仍需放进 `~/.dsh/.agent-presets/`。对最终用户推荐上方的一键脚本。
-- 本地开发安装（离线/内网）：`.\install.ps1` / `./install.sh`；手动安装见
-  [`gate/README.md`](gate/README.md)。
+- `package.json` 的 `dsh.bundle.patch` 使 `dsh plugin add` 自动把本包挂进
+  profile 的 bundles 层栈；预设仍按平台规范放入 `~/.dsh/.agent-presets/`
+  （一键脚本会自动完成这两步）。
+- **旧两包已废弃**：`dsh-security-gate` 与 `dsh-security-tools` 不再随本仓库
+  发布（此前的 `@dsh.so/*` scoped 包早已 deprecated）。一键脚本会把旧安装
+  自动迁移到新包；手动迁移：先
+  `dsh plugin --profile web remove dsh-security-gate dsh-security-tools`，
+  再按上方命令重装。
+- 本地开发安装（离线/内网）：`.\install.ps1` / `./install.sh`；门禁完整配置表见
+  [`docs/gate.zh.md`](docs/gate.zh.md)。
 
 ## 许可证与命名
 

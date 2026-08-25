@@ -1,0 +1,26 @@
+# dsh-code-security profile bundle patch.
+#
+# `package.json` declares `dsh.bundle.patch: ./cordis.patch.yml`, so
+# `dsh plugin --profile <name> add dsh-code-security` installs this package
+# into the profile AND appends `dsh-code-security` to the profile's
+# `dsh.profile.bundles` layer stack; this patch then inserts the plugin row.
+# No manual `cordis.patch.yml` row is needed.
+#
+# The row id remains `dsh-security-gate` for backward compatibility: existing
+# id-targeted override patches (and older uninstallers) key on that id. The
+# module name resolves to THIS package's main entry (`./index.js`, formerly
+# the standalone dsh-security-gate package).
+#
+# The row intentionally carries no config: every setting has a code default.
+# To customize, add an id-targeted override to the profile's own
+# cordis.patch.yml — it replaces the whole config, so restate every field:
+#
+#   - id: dsh-security-gate
+#     config:
+#       autoScan: true
+#       scanOnBoot: false
+#       engine: cli
+#       sandboxMode: danger-full-access
+- insert:
+    - id: dsh-security-gate
+      name: 'dsh-code-security'

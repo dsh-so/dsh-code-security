@@ -1,18 +1,14 @@
 {
   "name": "dsh-code-security",
-  "version": "0.1.4",
-  "description": "DeepSeek Harness (DSH) security plugin project: auto-audits newly installed plugins with the host model (dsh-security-gate) and provides a security-audit agent preset with Codex Security workflow skills and scan tools (dsh-security-tools).",
+  "version": "0.2.0",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "description": "DeepSeek Harness security bundle: auto-audits newly installed plugins with the harness's own model (settings panel + batch tools), and ships the Security-Audit-Mode agent preset with the OpenAI Codex Security workflow skills and dsh_security_* scan tools. One package, one `dsh plugin add`.",
   "license": "Apache-2.0",
-  "private": true,
-  "keywords": [
-    "dsh",
-    "dsh-plugin",
-    "deepseek-harness",
-    "cordis",
-    "security",
-    "audit",
-    "codex-security"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ihuajiu/dsh-code-security.git"
@@ -21,12 +17,36 @@
   "bugs": {
     "url": "https://github.com/ihuajiu/dsh-code-security/issues"
   },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "security",
+    "audit",
+    "codex-security",
+    "preset",
+    "bundle"
+  ],
+  "files": [
+    "index.js",
+    "client.js",
+    "audit-baseline.json",
+    "cordis.patch.yml",
+    "preset",
+    "README.md",
+    "README.en.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dsh": {
-    "compatible": true,
-    "components": {
-      "gate": "dsh-security-gate",
-      "tools": "dsh-security-tools"
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ]
     },
-    "preset": "dsh-security"
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }

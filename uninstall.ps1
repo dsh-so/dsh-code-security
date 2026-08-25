@@ -1,5 +1,5 @@
 # Uninstall the openai-code-security DSH plugin project (dsh-code-security):
-#   1. dsh-security-gate — removed from EVERY profile: `dsh plugin remove` for
+#   1. the bundle (+ legacy dsh-security-gate/tools) — removed from EVERY
 #      the current scoped name plus legacy names, orphan node_modules junctions,
 #      any stale manual cordis.patch.yml row, and a defensive strip from the
 #      profile bundle list.
@@ -32,7 +32,7 @@ if (('' + $dsh).TrimEnd('/', '\') -eq '') {
   exit 1
 }
 
-$names = @('dsh-security-gate', 'openai-code-security-gate', '@dsh.so/dsh-security-gate')
+$names = @('dsh-code-security', 'dsh-security-gate', 'dsh-security-tools', 'openai-code-security-gate', '@dsh.so/dsh-security-gate', '@dsh.so/dsh-security-tools')
 
 # ── 1. gate plugin from every profile ───────────────────────────────────────
 $profilesDir = Join-Path $dsh 'profiles'

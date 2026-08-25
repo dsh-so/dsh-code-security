@@ -49,9 +49,10 @@ curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/inst
 > (`curl -fsSL <URL above> -o install.sh`) and then run `bash install.sh`.
 
 The script automatically: downloads the project to a persistent cache
-(`~/.dsh/cache/dsh-code-security`), installs the "Security Audit Mode" preset, and
-mounts the "Security Audit Gate" into the web profile. **Idempotent** — re-running
-is safe; legacy manual config rows from older versions are migrated automatically.
+(~/.dsh/cache/dsh-code-security), installs the "Security Audit Mode" preset, and
+mounts the **dsh-code-security bundle** (audit gate panel + batch audit tools)
+into the web profile. **Idempotent** — re-running is safe; legacy two-package
+installs are migrated to the new package automatically.
 
 > Requires `git` (for downloading) and `pnpm` (for the gate installation). The
 > repository URL can be customized: set `$env:DSH_CODE_SECURITY_REPO_URL` on
@@ -142,7 +143,7 @@ fields; changes take effect after a DSH restart):
 
 Common fields: `engine`, `provider`/`model`, `intervalMs`, `ignorePrefixes`,
 `cliCommand`, `maxHarvestChars`, `maxParallel`, `scanRateLimit`. See
-[`gate/README.md`](gate/README.md) (in Chinese) for the full configuration table.
+[`docs/gate.en.md`](docs/gate.en.md) for the full configuration table.
 
 > ⚠️ `engine: 'cli'` requires an explicit `sandboxMode` config (on Windows:
 > `danger-full-access`, i.e. unrestricted execution — the gate emits a loud warning
@@ -171,7 +172,7 @@ excludes `login`/`export` by default and can be extended via the
 - **Triage memory**: `audit-baseline.json` is injected into audit prompts to avoid
   repeated false positives.
 
-Security analysis: see [`gate/README.md`](gate/README.md) (in Chinese). The full
+Security analysis: see [`docs/gate.en.md`](docs/gate.en.md). The full
 audit report (`docs/SECURITY_AUDIT_REPORT.md`) is maintained as a local working
 document and is not shipped with the repository.
 
@@ -202,46 +203,49 @@ curl -fsSL https://raw.githubusercontent.com/ihuajiu/dsh-code-security/main/unin
 ## Project Structure
 
 ```
-openai-code-security/
-├── gate/                   # Security gate host plugin dsh-security-gate
-│   ├── index.js            #   zero-dependency cordis plugin
-│   ├── client.js           #   Settings "Security Audit" panel (bilingual)
-│   ├── cordis.patch.yml    #   bundle patch (auto-mounted by dsh plugin add)
-│   ├── audit-baseline.json #   triage memory across audit rounds
-│   └── README.md
-├── agent.cordis.yml        # preset composition (standard + dsh-security additions)
-├── preset.yml              # preset metadata
-├── plugins/dsh-security/   # tool plugin dsh-security-tools (5 dsh_security_*)
-├── skills/dsh-security/    # DSH adapter entry skill
-├── bundled/                # upstream _bundled_plugin copy (skills/references/schemas/scripts/mcp)
-├── docs/                   # security audit report / plugin recommendation / GitHub discussion post
-├── assets/                 # README images (UI screenshots + logo)
+dsh-code-security/
+├── index.js                  # security gate host plugin (zero-dep cordis plugin, row id: dsh-security-gate)
+├── client.js                 # Settings "Security Audit" panel (bilingual)
+├── audit-baseline.json       # triage memory across audit rounds
+├── cordis.patch.yml          # bundle patch (auto-mounted by dsh plugin add)
+├── preset/                   # the Security-Audit-Mode preset tree
+│   ├── agent.cordis.yml      #   preset composition (standard + dsh-security-tools row)
+│   ├── preset.yml            #   preset metadata
+│   ├── skills/dsh-security/  #   DSH adapter entry skill
+│   ├── bundled/              #   upstream payload copy (skills/references/schemas/scripts/mcp)
+│   └── plugins/dsh-security/index.js  # 5 dsh_security_* tools
+├── docs/                     # gate.en/zh.md detailed gate docs + local working docs
+├── assets/                   # README images (UI screenshots + logo)
 ├── install.ps1 / install.sh / uninstall.*
 └── README.md / README.en.md
 ```
 
 ## Development & Publishing
 
-Both components are published to npmjs (Apache-2.0):
+Since **0.2.0** this ships as a **single npm package / single profile bundle**
+(Apache-2.0) — one package carries the security gate host plugin, the settings
+panel, the Security-Audit-Mode preset, and the full bundled payload (107 files;
+the in-package integrity check keeps passing):
 
 ```bash
-npm install dsh-security-gate      # security gate host plugin
-npm install dsh-security-tools     # security audit mode tool plugin (bundled payload included)
+# Official channel: installs AND activates as a profile bundle layer (recommended)
+dsh plugin --profile web add dsh-code-security
+# Or just fetch the npm package (no bundle layer activated)
+npm install dsh-code-security
 ```
 
-- Plain unscoped npm package names — installing, referencing, and upgrading
-  requires nothing special; the tools package ships the bundled payload (107
-  files) in-package, and the integrity check passes in the in-package layout as
-  well.
-- **Legacy names deprecated**: the previously published `@dsh.so/dsh-security-gate`
-  and `@dsh.so/dsh-security-tools` are marked deprecated on npm (message:
-  "renamed to dsh-security-gate" / "renamed to dsh-security-tools"); install the
-  unscoped names above for new installs.
-- **npm install ≠ plugin activation**: the gate still needs to be mounted into a
-  profile (`dsh plugin --profile web add ...`), and the preset still needs to go
-  into `~/.dsh/.agent-presets/`. The one-line scripts are recommended for end users.
+- The `package.json` `dsh.bundle.patch` field makes `dsh plugin add` append this
+  package to the profile's bundles layer stack automatically; the preset still
+  goes into `~/.dsh/.agent-presets/` per platform convention (the one-line
+  scripts do both steps for you).
+- **Legacy two packages retired**: `dsh-security-gate` and `dsh-security-tools`
+  are no longer published from this repo (the earlier `@dsh.so/*` scoped packages
+  were already deprecated). The one-line scripts migrate old installs
+  automatically; manual migration: run
+  `dsh plugin --profile web remove dsh-security-gate dsh-security-tools`, then
+  reinstall per above.
 - Local development install (offline/intranet): `.\install.ps1` / `./install.sh`;
-  manual installation: see [`gate/README.md`](gate/README.md) (in Chinese).
+  full gate configuration table: [`docs/gate.en.md`](docs/gate.en.md).
 
 ## License & Naming
 
