@@ -256,6 +256,11 @@ export function apply(ctx, config = {}) {
     scanRateLimit: config.scanRateLimit ?? 10,
     scanRateWindowMs: config.scanRateWindowMs ?? 10000,
     maxOutputTokens: config.maxOutputTokens ?? 32000,
+    // Console progress heartbeat while an llm scan streams (the
+    // "scan <key> in progress: Ns" lines). Off by default (0) so a busy
+    // console stays readable; set progressLogMs to a millisecond value
+    // (e.g. 15000) to log a liveness line roughly that often.
+    progressLogMs: config.progressLogMs ?? 0,
     // llm call timeout policy (two-tier):
     //   llmTimeoutMs — hard ceiling for the whole stream; even a slowly
     //     progressing stream is cut here (default 15 minutes; was 240s, too
@@ -924,7 +929,7 @@ export function apply(ctx, config = {}) {
       let progressLast = 0;
       progressTimer = setInterval(() => {
         const now = Date.now();
-        if (now - progressLast < 15000) return;
+        if (cfg.progressLogMs <= 0 || now - progressLast < cfg.progressLogMs) return;
         progressLast = now;
         const elapsed = Math.round((now - progressStarted) / 1000);
         console.log(
@@ -1728,6 +1733,6 @@ export function apply(ctx, config = {}) {
     '[dsh-security-gate] active: autoScan=' + cfg.autoScan + ' intervalMs=' + cfg.intervalMs +
     ' stateDir=' + cfg.stateDir + ' engine=' + cfg.engine +
     (cfg.engine === 'llm' ? ' model=' + (cfg.model ?? 'deployment default') + ' provider=' + (cfg.provider ?? 'deployment default') : '') +
-    ' (console progress every ~15s while a scan runs)'
+    ' (console progress ' + (cfg.progressLogMs > 0 ? 'every ~' + Math.round(cfg.progressLogMs / 1000) + 's' : 'off') + ' while a scan runs)'
   );
 }

@@ -107,6 +107,28 @@ cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.
 
 ---
 
+## 配置
+
+门禁行自带合理默认值，无需任何配置即可工作。需要调整时，向
+`~/.dsh/profiles/web/cordis.patch.yml` 追加一条 id 定向覆盖补丁（整行替换；
+重启 DSH 后生效）：
+
+```yaml
+# ~/.dsh/profiles/web/cordis.patch.yml
+- id: dsh-security-gate
+  config:
+    autoScan: true        # 进程级自动审计（默认 true）
+    intervalMs: 60000     # 复审轮询间隔
+    progressLogMs: 15000  # 扫描控制台心跳；0 = 静默（默认）
+```
+
+`progressLogMs` 控制 LLM 扫描流式进行时的控制台心跳（形如
+`[dsh-security-gate] scan <key> in progress: 45s, …`）。**默认关闭**，保持控制台
+清爽；设为毫秒值（如 `15000`）则大约按该间隔输出一条存活日志。扫描的开始 /
+完成 / 失败日志始终照常打印。全部选项见 [docs/gate.zh.md](docs/gate.zh.md)。
+
+---
+
 ## 安全设计（要点）
 
 - **默认零认证**：两条路径都使用宿主 `llm` 服务（同会话模型路由），无需外部 API key；可选

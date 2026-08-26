@@ -114,6 +114,30 @@ sub-command whitelist, timeouts).
 
 ---
 
+## Configuration
+
+The gate row ships with sensible defaults and needs no config to work. To tune
+it, append an id-targeted override to `~/.dsh/profiles/web/cordis.patch.yml`
+(whole-row replacement; takes effect after a DSH restart):
+
+```yaml
+# ~/.dsh/profiles/web/cordis.patch.yml
+- id: dsh-security-gate
+  config:
+    autoScan: true        # process-level auto audit (default true)
+    intervalMs: 60000     # re-audit sweep interval
+    progressLogMs: 15000  # console scan heartbeat; 0 = silent (default)
+```
+
+`progressLogMs` controls the console heartbeat printed while an LLM scan is
+streaming (`[dsh-security-gate] scan <key> in progress: 45s, …`). It is **off by
+default** so a busy console stays readable; set it to a millisecond value (e.g.
+`15000`) to log a liveness line roughly that often. Scan start / completion /
+failure lines are always printed regardless. Full option table:
+[docs/gate.en.md](docs/gate.en.md).
+
+---
+
 ## Security design (highlights)
 
 - **Zero-auth by default**: both paths use the host `llm` service (same session model routing);

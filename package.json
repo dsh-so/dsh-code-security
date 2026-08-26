@@ -1,10 +1,11 @@
 {
   "name": "@dsh-so/dsh-code-security",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "main": "./index.js",
   "exports": {
     ".": "./index.js",
+    "./client": "./client.js",
     "./package.json": "./package.json"
   },
   "description": "DeepSeek Harness security bundle: auto-audits newly installed plugins with the harness's own model (settings panel + batch tools), and ships the Security-Audit-Mode agent preset with the OpenAI Codex Security workflow skills and dsh_security_* scan tools. One package, one `dsh plugin add`.",
