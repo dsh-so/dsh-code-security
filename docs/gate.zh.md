@@ -48,7 +48,7 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
 | `dsh_security_resources` | 返回 bundled 载荷路径 + 完整性校验结果 |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="安全审计模式" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="安全审计模式" width="720">
   <br><em>「安全审计模式」会话：13 个安全工作流技能 + 5 个扫描工具</em>
 </p>
 
@@ -62,15 +62,15 @@ API key。可选 `engine: 'cli'` 走 OpenAI Codex Security 官方扫描（需其
   每次审计注入提示词，模型不重复报告已知项 —— 显著降低误报率。
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计主界面.jpg" alt="安全审计主界面" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计主界面.jpg" alt="安全审计主界面" width="720">
   <br><em>设置 →「安全审计」面板：每插件审计状态、一键重审、打开报告</em>
 </p>
 
 审计报告在面板内联展示（双语、可复制、摘要表前置）：
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-审计报告摘要.jpg" alt="审计报告摘要" width="720">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-风险审计详情.jpg" alt="风险审计详情" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-审计报告摘要.jpg" alt="审计报告摘要" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-风险审计详情.jpg" alt="风险审计详情" width="720">
   <br><em>报告摘要表 + 风险审计详情（AI 生成，仅供参考）</em>
 </p>
 
@@ -121,7 +121,7 @@ config，需列全字段；改动在 DSH 重启后生效）：
 静态安全扫描结果（无 Critical / High 发现，余项均为 Info 级正常行为）：
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/dsh.so-static-security-audit-result-20260816-133339.jpg" alt="dsh.so 静态安全扫描结果" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/dsh.so-static-security-audit-result-20260816-133339.jpg" alt="dsh.so 静态安全扫描结果" width="720">
   <br><em>静态安全扫描结果（启发式标记，非安全审计；详见上文甄别）</em>
 </p>
 
@@ -142,6 +142,6 @@ config，需列全字段；改动在 DSH 重启后生效）：
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/dshso-logo.svg" width="22" height="22" alt="dsh.so" style="vertical-align: middle">&nbsp;
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/dshso-logo.svg" width="22" height="22" alt="dsh.so" style="vertical-align: middle">&nbsp;
   <b>dsh-code-security</b> · © 2026 dsh.so · Apache-2.0 · <b>Powered by <a href="https://dsh.so">dsh.so</a></b>
 </p>

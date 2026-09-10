@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@dsh-so/dsh-code-security"><img src="https://img.shields.io/npm/v/@dsh-so/dsh-code-security?style=flat&label=npm&color=4D6BFE" alt="npm"></a>
-  <a href="https://github.com/zhousm666/dsh-code-security"><img src="https://img.shields.io/github/stars/zhousm666/dsh-code-security?style=flat&label=%E2%98%85&color=08C" alt="GitHub stars"></a>
+  <a href="https://github.com/dsh-so/dsh-code-security"><img src="https://img.shields.io/github/stars/dsh-so/dsh-code-security?style=flat&label=%E2%98%85&color=08C" alt="GitHub stars"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-2EA44F?style=flat" alt="Apache-2.0"></a>
   <img src="https://img.shields.io/badge/DSH-0.1.1--rc.2-4D6BFE?style=flat" alt="DSH 0.1.1-rc.2">
   <a href="https://www.dsh.so/artifact/dsh-code-security/"><img src="https://www.dsh.so/badge/dsh-code-security.svg" alt="dsh.so 风险评级"></a>

@@ -55,7 +55,7 @@ The 5 tools (all defaulting to the session working directory as `cwd`):
 | `dsh_security_resources` | Return the bundled payload path + integrity verification result |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="Security Audit Mode" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-安全审计模式.jpg" alt="Security Audit Mode" width="720">
   <br><em>"Security Audit Mode" session: 13 security workflow skills + 5 scanning tools</em>
 </p>
 
@@ -73,7 +73,7 @@ The 5 tools (all defaulting to the session working directory as `cwd`):
   items — significantly reducing false-positive rates.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计主界面.jpg" alt="Security Audit main panel" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计主界面.jpg" alt="Security Audit main panel" width="720">
   <br><em>Settings → "Security Audit" panel: per-plugin audit status, one-click re-audit, open report</em>
 </p>
 
@@ -81,8 +81,8 @@ Audit reports are rendered inline in the panel (bilingual, copyable, summary tab
 first):
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-审计报告摘要.jpg" alt="Audit report summary" width="720">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/安全审计-风险审计详情.jpg" alt="Risk audit details" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-审计报告摘要.jpg" alt="Audit report summary" width="720">
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/安全审计-风险审计详情.jpg" alt="Risk audit details" width="720">
   <br><em>Report summary table + risk audit details (AI-generated, for reference only)</em>
 </p>
 
@@ -159,6 +159,6 @@ actually enforces the policy it claims). Complementary to this project: it verif
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/zhousm666/dsh-code-security/main/assets/dshso-logo.svg" width="22" height="22" alt="dsh.so" style="vertical-align: middle">&nbsp;
+  <img src="https://raw.githubusercontent.com/dsh-so/dsh-code-security/main/assets/dshso-logo.svg" width="22" height="22" alt="dsh.so" style="vertical-align: middle">&nbsp;
   <b>dsh-code-security</b> · © 2026 dsh.so · Apache-2.0 · <b>Powered by <a href="https://dsh.so">dsh.so</a></b>
 </p>

@@ -1,6 +1,6 @@
 {
   "name": "@dsh-so/dsh-code-security",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "main": "./index.js",
   "exports": {
@@ -12,11 +12,11 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhousm666/dsh-code-security.git"
+    "url": "git+https://github.com/dsh-so/dsh-code-security.git"
   },
-  "homepage": "https://github.com/zhousm666/dsh-code-security",
+  "homepage": "https://github.com/dsh-so/dsh-code-security",
   "bugs": {
-    "url": "https://github.com/zhousm666/dsh-code-security/issues"
+    "url": "https://github.com/dsh-so/dsh-code-security/issues"
   },
   "keywords": [
     "dsh",
