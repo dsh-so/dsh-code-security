@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@dsh-so/dsh-code-security)](https://www.npmjs.com/package/@dsh-so/dsh-code-security)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.1.1--rc.2-blue)](https://github.com/ihuajiu/dsh-code-security)
+[![DSH](https://img.shields.io/badge/DSH-0.1.1--rc.2-blue)](https://github.com/zhousm666/dsh-code-security)
 [![dsh.so risk](https://www.dsh.so/badge/dsh-code-security.svg)](https://www.dsh.so/artifact/dsh-code-security/)
 [![dsh.so install](https://www.dsh.so/badge/install/dsh-code-security.svg)](https://www.dsh.so/artifact/dsh-code-security/)
 

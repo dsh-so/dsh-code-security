@@ -12,11 +12,11 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ihuajiu/dsh-code-security.git"
+    "url": "git+https://github.com/zhousm666/dsh-code-security.git"
   },
-  "homepage": "https://github.com/ihuajiu/dsh-code-security",
+  "homepage": "https://github.com/zhousm666/dsh-code-security",
   "bugs": {
-    "url": "https://github.com/ihuajiu/dsh-code-security/issues"
+    "url": "https://github.com/zhousm666/dsh-code-security/issues"
   },
   "keywords": [
     "dsh",
