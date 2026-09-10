@@ -4,7 +4,7 @@
 > （两条原生命令，无需脚本）；npm 包名为 `@dsh-so/dsh-code-security`。文中行 id `dsh-security-gate`
 > 保持不变，既有覆盖补丁仍然有效。
 
-> **[English](README.md) | 中文**
+> **[English](gate.en.md) | 中文**
 
 > 产品展示名：**dsh-code-security**；技术标识：宿主插件 `dsh-security-gate`、
 > agent preset `dsh-security`、工具 `dsh_security_*`。仓库目录名沿用

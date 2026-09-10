@@ -5,7 +5,7 @@
 > `dsh-security-gate` is unchanged, existing override patches keep working.
 ﻿# dsh-code-security (Security Audit Plugin)
 
-> **English | [中文](README.md)**
+> **English | [中文](gate.zh.md)**
 
 > Product display name: **dsh-code-security**; technical identifiers: host plugin
 > `dsh-security-gate`, agent preset `dsh-security`, tools `dsh_security_*`.
@@ -134,7 +134,7 @@ excludes `login`/`export` by default and can be extended via the
 - **Triage memory**: `audit-baseline.json` is injected into audit prompts to avoid
   repeated false positives.
 
-Security analysis: see [`README.md`](../README.md) (Security design). The full
+Security analysis: see [`README.en.md`](../README.en.md) (Security design). The full
 audit report (`docs/SECURITY_AUDIT_REPORT.md`) is maintained as a local working
 document and is not shipped with the repository.
 

@@ -1,19 +1,19 @@
 <p align="center">
-  <img src="assets/安全审计主界面.jpg" alt="dsh-code-security — DSH Settings → Security Audit" width="100%">
+  <img src="assets/安全审计主界面.jpg" alt="dsh-code-security —— DSH 设置 → 安全审计" width="100%">
 </p>
 
 <h1 align="center">dsh-code-security</h1>
 
 <p align="center">
-  English | <a href="README.zh.md">中文</a>
+  <a href="README.en.md">English</a> | 中文
 </p>
 
 <p align="center">
-  <strong>Audit what enters your profile; arm the sessions that scan your code.</strong>
+  <strong>审计进入 profile 的插件，武装扫描代码的会话。</strong>
 </p>
 
 <p align="center">
-  A DeepSeek Harness (DSH) security-audit plugin. <b>Two independent layers, one package</b>: a process-level always-on plugin gate, and an opt-in session-level “Security Audit Mode”.
+  DeepSeek Harness（DSH）安全审计插件。<b>两层能力，彼此独立，一个包承载</b>：进程级常驻的插件门禁，与会话级按需注入的「安全审计模式」。
 </p>
 
 <p align="center">
@@ -21,171 +21,171 @@
   <a href="https://github.com/dsh-so/dsh-code-security"><img src="https://img.shields.io/github/stars/dsh-so/dsh-code-security?style=flat&label=%E2%98%85&color=08C" alt="GitHub stars"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-2EA44F?style=flat" alt="Apache-2.0"></a>
   <img src="https://img.shields.io/badge/DSH-0.1.1--rc.2-4D6BFE?style=flat" alt="DSH 0.1.1-rc.2">
-  <a href="https://www.dsh.so/artifact/dsh-code-security/"><img src="https://www.dsh.so/badge/dsh-code-security.svg" alt="dsh.so risk rating"></a>
-  <a href="https://www.dsh.so/artifact/dsh-code-security/"><img src="https://www.dsh.so/badge/install/dsh-code-security.svg" alt="dsh.so installs"></a>
+  <a href="https://www.dsh.so/artifact/dsh-code-security/"><img src="https://www.dsh.so/badge/dsh-code-security.svg" alt="dsh.so 风险评级"></a>
+  <a href="https://www.dsh.so/artifact/dsh-code-security/"><img src="https://www.dsh.so/badge/install/dsh-code-security.svg" alt="dsh.so 安装量"></a>
 </p>
 
-This project wraps OpenAI [codex-security](https://github.com/openai/codex-security) (Apache-2.0) into a DeepSeek Harness (DSH) security-audit plugin — not an official OpenAI product and not affiliated with OpenAI (`Codex` / `Codex Security` are OpenAI trademarks; this project uses neutral naming).
+本项目把 OpenAI [codex-security](https://github.com/openai/codex-security)（Apache-2.0）封装成 DeepSeek Harness（DSH）安全审计插件 —— 非 OpenAI 官方产品，与其无任何关联（`Codex` / `Codex Security` 为 OpenAI 商标，本项目已改用中性命名）。
 
-- 🛡 **Gate configuration & security design**: [docs/gate.en.md](docs/gate.en.md) (中文版: [docs/gate.zh.md](docs/gate.zh.md))
-- 🔎 **Related**: [dsh-plugin-vet](https://github.com/wulun811/dsh-plugin-vet) — deterministic static rule scans at install time; dsh-code-security adds model-based behavioral audits plus an in-session deep scanning mode. The two are complementary defense-in-depth layers.
+- 🛡 **门禁配置与安全设计**：[docs/gate.zh.md](docs/gate.zh.md)（英文版：[docs/gate.en.md](docs/gate.en.md)）
+- 🔎 **相关项目**：[dsh-plugin-vet](https://github.com/wulun811/dsh-plugin-vet) —— 安装期的确定性静态规则扫描；本项目补上基于模型的行为审计与会话内深扫模式，两者是互补的纵深防御层。
 
-**Honest boundary**: the gate audits *plugins entering your profile*; it does not police your own source code at runtime. The preset only adds capabilities when you pick it for a session. Neither layer blocks or rewrites anything by itself.
+**诚实边界**：门禁审计的是*进入 profile 的插件*，不监控你自己源码的运行时行为；预设只在你为会话选择它时才注入能力。两层都不会自行拦截或改写任何东西。
 
-## Architecture
+## 架构
 
-One package, two layers living at different levels of the harness:
+一个包，两层能力，分别活在 DSH 的不同层级：
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="dsh-code-security architecture: one package feeding a process-level always-on gate layer and an opt-in session-level Security Audit Mode preset" width="880">
+  <img src="assets/architecture.zh.svg" alt="dsh-code-security 架构：一个包同时供给进程级常驻门禁层与会话级可选的安全审计模式预设" width="880">
 </p>
 
-- The **gate** rides the **profile bundle channel**: one `dsh plugin add` registers it permanently; every boot re-applies its patch layer.
-- The **preset** is discovered from the **user preset root** (`~/.dsh/.agent-presets/`) — currently the only placement point DSH exposes for presets, hence the manual copy.
+- **门禁**走 **profile 组合包通道**：一条 `dsh plugin add` 永久登记，每次启动都会重新应用它的补丁层。
+- **预设**从**用户预设根**（`~/.dsh/.agent-presets/`）发现 —— 这是 DSH 目前唯一的预设放置点，所以复制动作暂时省不掉。
 
-## Features
+## 功能特性
 
-- **Plugin gate (process-level, always-on)** — every newly installed plugin is automatically static-audited with the harness’s own model, **zero external credentials**; findings land in a bilingual settings panel and on-disk reports before you ever launch a session with them.
-- **Security Audit Mode (session-level, opt-in)** — a selectable agent preset that arms conversations with the 13 OpenAI Codex Security workflow skills plus 5 native `dsh_security_*` scan tools, covering whole-repo scans, diff scans, finding triage, threat models, hardening proposals and vulnerability writeups.
-- **Zero-auth by default** — both paths reuse the host `llm` service (same session model routing); no external API keys. Optional `engine: cli` delegates to the official scanner (its own auth).
-- **Fail-closed payload integrity** — the bundled payload carries a **107-entry SHA-256 manifest**; any mismatch **disables the tools** instead of loading them.
-- **Path confinement** — scan / findings targets must canonicalize inside the session working directory (symlink-aware); `file://` and remote URLs rejected; absolute-path exposure off by default.
-- **Injection-safe CLI calls** — literal argument quoting, admin-only `cliCommand` character whitelist with version pinning, sub-command whitelist, 5-minute foreground timeout cap.
-- **Endpoint authentication** — panel and report endpoints require a token plus Host/Origin checks and rate limiting, and additionally verify that the TCP peer address is a loopback interface.
-- **Triage memory** — `audit-baseline.json` is injected into the audit prompt, suppressing previously reviewed false positives across rounds.
-- **Accessible panel** — bilingual UI following DSH theme tokens; all status pills meet WCAG AA contrast.
+- **插件门禁（进程级，常驻）** — 每个新装插件都会被自动静态审计，使用宿主自身模型，**零外部凭证**；结论先进入双语设置面板与落盘报告，之后你才会带着它们启动会话。
+- **安全审计模式（会话级，可选）** — 一个可选择的 agent 预设，为对话装配 13 个 OpenAI Codex Security 工作流技能 + 5 个原生 `dsh_security_*` 扫描工具，覆盖整仓扫描、diff 扫描、发现甄别、威胁建模、加固建议与漏洞写作。
+- **零认证默认** — 两条路径都复用宿主 `llm` 服务（同会话模型路由），无需任何外部 API key；可选 `engine: cli` 委托官方扫描器（需其自身认证）。
+- **载荷完整性 fail-closed** — bundled 载荷带 **107 条 SHA-256 清单**，任一失配即**禁用工具**而非加载。
+- **路径围栏** — scan / findings 目标必须经符号链接规范化后落在会话工作目录内；拒绝 `file://` 与远程 URL；绝对路径默认不暴露。
+- **注入安全的 CLI 调用** — 字面量参数引用、管理员级 `cliCommand` 字符白名单 + 版本钉扎、子命令白名单、5 分钟前台超时上限。
+- **端点鉴权** — 面板与报告端点需 token + Host/Origin 校验 + 限流，并额外校验 TCP 对端地址必须是回环接口。
+- **甄别记忆** — `audit-baseline.json` 注入审计提示词，跨轮次抑制已复核的误报。
+- **无障碍面板** — 双语 UI 跟随 DSH 主题令牌；全部状态胶囊达 WCAG AA 对比度。
 
-## Installation
+## 安装
 
-Two steps — **step 2 is optional**; whether you want the in-session security scanning capability is up to you.
+分两步，**第 2 步可选** —— 是否需要会话内的安全扫描能力，由你决定。
 
-| Step | Required | What you get |
+| 步骤 | 必需 | 得到什么 |
 | --- | --- | --- |
-| 1. Mount the gate | ✅ | Auto audit of newly installed plugins, the “Settings → Security Audit” panel, on-disk reports |
-| 2. Unlock Security Audit Mode | optional | 13 workflow skills + 5 `dsh_security_*` session tools |
+| 1. 挂载门禁 | ✅ | 新装插件自动审计、「设置 → 安全审计」面板、落盘报告 |
+| 2. 解锁安全审计模式 | 可选 | 13 个工作流技能 + 5 个 `dsh_security_*` 会话工具 |
 
-### 1. Mount the gate (required)
+### 1. 挂载门禁（必装）
 
-Process-level protection takes effect immediately. The npm package is published, so install it by name (no clone needed):
+进程级防护立即生效。npm 包已发布，直接按包名安装（无需克隆仓库）：
 
 ```bash
 dsh plugin --profile web add @dsh-so/dsh-code-security
 ```
 
-For development you can also install from a local checkout (run inside the project directory):
+开发时也可从本地 checkout 安装（在项目目录内执行）：
 
 ```bash
 dsh plugin --profile web add .
 ```
 
-> Requires `pnpm`. Activate chain: pnpm install → the manifest records `dsh.profile.bundles` → next boot composes the bundle layer and mounts the plugin (row id `dsh-security-gate`).
+> 需要已安装 `pnpm`。生效链路：pnpm 安装 → 清单登记 `dsh.profile.bundles` → 下次启动组合 bundles 层挂载插件（行 id `dsh-security-gate`）。
 
-### 2. Unlock “Security Audit Mode” (optional)
+### 2. 解锁「安全审计模式」（可选）
 
-Place `preset/` into the user preset root (source matches your install method):
+把 `preset/` 放入用户预设根（复制源按你的安装方式二选一）：
 
 ```powershell
-# Windows — source A: local checkout
+# Windows —— 源 A：本地 checkout
 Copy-Item -Recurse .\preset "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
-# source B: in-package copy after npm install
+# 源 B：npm 安装后的包内副本
 Copy-Item -Recurse "$env:USERPROFILE\.dsh\profiles\web\node_modules\@dsh-so\dsh-code-security\preset" "$env:USERPROFILE\.dsh\.agent-presets\dsh-security"
 ```
 
 ```bash
-# macOS / Linux — source A
+# macOS / Linux —— 源 A
 cp -R preset ~/.dsh/.agent-presets/dsh-security
-# source B
+# 源 B
 cp -R ~/.dsh/profiles/web/node_modules/@dsh-so/dsh-code-security/preset ~/.dsh/.agent-presets/dsh-security
 ```
 
-Skipping this step costs the gate nothing — add it whenever you need it.
+不做这一步，门禁的任何功能都不受影响；想用时随时补上。
 
-## Quick start
+## 快速上手
 
-1. **Install** — run step 1 above to mount the gate.
-2. **Read the findings** — open DSH **Settings → Security Audit** to see audit conclusions and on-disk reports for newly installed plugins.
-3. **Start scanning** (optional) — after step 2, pick the “安全审计模式（dsh-code-security）” preset in a new session, then just ask: whole-repo scans, diff scans, finding triage, threat models, hardening proposals…
+1. **安装** —— 执行上一节第 1 步，挂载门禁。
+2. **看结论** —— 打开 DSH **设置 → 安全审计**，查看新装插件的审计结论与落盘报告。
+3. **开扫描**（可选）—— 完成上一节第 2 步后，新建会话时选择「安全审计模式（dsh-code-security）」预设，然后直接提出诉求：整仓扫描、diff 扫描、甄别发现、威胁建模、加固建议……
 
-The 5 `dsh_security_*` tools execute the `@openai/codex-security` CLI behind strict rails (literal argument quoting, workdir confinement, sub-command whitelist, timeouts).
+5 个 `dsh_security_*` 工具在严格护栏下执行 `@openai/codex-security` CLI（字面量参数引用、工作目录约束、子命令白名单、超时上限）。
 
-## Screenshots
+## 界面
 
 <p align="center">
-  <img src="assets/安全审计-安全审计模式.jpg" alt="Security Audit Mode" width="720">
-  <br><em>Security Audit Mode: driving the Codex Security workflow in-session</em>
+  <img src="assets/安全审计-安全审计模式.jpg" alt="安全审计模式" width="720">
+  <br><em>安全审计模式：会话内驱动 Codex Security 工作流</em>
 </p>
 
 <p align="center">
-  <img src="assets/安全审计-审计报告摘要.jpg" alt="Audit report summary" width="720">
-  <br><em>Gate audit report summary</em>
+  <img src="assets/安全审计-审计报告摘要.jpg" alt="审计报告摘要" width="720">
+  <br><em>门禁审计报告摘要</em>
 </p>
 
 <p align="center">
-  <img src="assets/安全审计-风险审计详情.jpg" alt="Finding details" width="720">
-  <br><em>Finding details</em>
+  <img src="assets/安全审计-风险审计详情.jpg" alt="风险审计详情" width="720">
+  <br><em>风险审计详情</em>
 </p>
 
-## Configuration
+## 配置
 
-The gate row ships with sensible defaults and **needs no config to work**. To tune it, append an id-targeted override to `~/.dsh/profiles/web/cordis.patch.yml` (whole-row replacement of `config` — list every field; takes effect after a DSH restart):
+门禁行自带合理默认值，**无需任何配置即可工作**。需要调整时，向 `~/.dsh/profiles/web/cordis.patch.yml` 追加一条 id 定向覆盖补丁（**整体替换** config，需列全字段；重启 DSH 后生效）：
 
 ```yaml
 # ~/.dsh/profiles/web/cordis.patch.yml
 - id: dsh-security-gate
   config:
-    autoScan: true        # process-level auto audit (default true)
-    scanOnBoot: false     # scan on boot (default false)
-    engine: llm           # llm (default, no auth) or cli (needs OpenAI auth)
-    intervalMs: 60000     # re-audit sweep interval
-    progressLogMs: 15000  # console scan heartbeat; 0 = silent (default)
+    autoScan: true        # 进程级自动审计（默认 true）
+    scanOnBoot: false     # 启动即扫（默认 false）
+    engine: llm           # llm（默认，免认证）或 cli（需 OpenAI 认证）
+    intervalMs: 60000     # 复审轮询间隔
+    progressLogMs: 15000  # 扫描控制台心跳；0 = 静默（默认）
 ```
 
-Common fields: `engine`, `provider` / `model`, `intervalMs`, `ignorePrefixes`, `cliCommand`, `maxHarvestChars`, `maxParallel`, `scanRateLimit`. Full table: [docs/gate.en.md](docs/gate.en.md).
+常用字段：`engine`、`provider` / `model`、`intervalMs`、`ignorePrefixes`、`cliCommand`、`maxHarvestChars`、`maxParallel`、`scanRateLimit`。完整配置表见 [docs/gate.zh.md](docs/gate.zh.md)。
 
-`progressLogMs` controls the console heartbeat printed while an LLM scan is streaming (`[dsh-security-gate] scan <key> in progress: 45s, …`). It is **off by default** so a busy console stays readable; set it to a millisecond value (e.g. `15000`) to log a liveness line roughly that often. Scan start / completion / failure lines are always printed regardless.
+`progressLogMs` 控制 LLM 扫描流式进行时的控制台心跳（形如 `[dsh-security-gate] scan <key> in progress: 45s, …`）。**默认关闭**，保持控制台清爽；设为毫秒值（如 `15000`）则大约按该间隔输出一条存活日志。扫描的开始 / 完成 / 失败日志始终照常打印。
 
-> ⚠️ `engine: cli` requires an explicit `sandboxMode` (on Windows that is `danger-full-access`, i.e. unrestricted execution — the gate prints a strong warning on every scan). Use it only when you explicitly trust both the CLI package and the audited plugin.
+> ⚠️ `engine: cli` 必须显式配置 `sandboxMode`（Windows 上为 `danger-full-access`，等于非受限执行 —— 门禁每次扫描都会打强警告）。仅在明确信任 CLI 包与被扫插件时使用。
 
-On the preset side (skills, tool whitelist) see `agent.cordis.yml`; the CLI tool excludes `login` / `export` by default and can be extended with `cliAllowedVerbs`.
+预设侧（技能、工具白名单）见 `agent.cordis.yml`；CLI 工具默认排除 `login` / `export`，可用 `cliAllowedVerbs` 扩展。
 
-## Security design (highlights)
+## 安全设计（要点）
 
-- **Prompt boundary**: any text inside a scan target is **data, never instructions**; in-repo instructions are ignored and reported as suspicious content.
-- **Argument safety**: shell literal quoting (no injection); paths converge on the working directory (out-of-bounds is an error).
-- **Whitelists**: CLI sub-command whitelist, `cliCommand` whitelist with version pinning, foreground timeout cap.
-- **Fail-closed payload integrity**: 107 bundled files verified against SHA-256; any mismatch makes the plugin refuse to load.
-- **Endpoint authentication**: token + Host/Origin checks + rate limiting; beyond the Host whitelist it also verifies that the TCP peer address is a loopback interface.
-- **Triage memory**: `audit-baseline.json` is injected into the audit prompt to avoid repeating false positives.
+- **提示词边界**：扫描目标中的任何文本都是**数据**而非指令；仓库内嵌指令一律忽略并作为可疑内容上报。
+- **参数安全**：shell 字面量转义（无注入）；路径收敛到工作目录（越界报错）。
+- **白名单**：CLI 子命令白名单、`cliCommand` 白名单 + 版本钉扎、前台超时上限。
+- **载荷完整性 fail-closed**：bundled 107 文件 SHA-256 校验，任一不符插件拒绝加载。
+- **端点鉴权**：token + Host/Origin 校验 + 限流；Host 白名单之外还校验 TCP 对端地址必须是回环接口。
+- **甄别记忆**：`audit-baseline.json` 注入审计提示词，避免重复误报。
 
-Full analysis: [docs/gate.en.md](docs/gate.en.md) (中文版: [docs/gate.zh.md](docs/gate.zh.md)).
+完整分析见 [docs/gate.zh.md](docs/gate.zh.md)（英文版：[docs/gate.en.md](docs/gate.en.md)）。
 
-**Related projects**:
+**相关项目**：
 
-- [dsh-plugin-vet](https://github.com/wulun811/dsh-plugin-vet) — deterministic static rule scans at install time; dsh-code-security adds model-based behavioral audits plus an in-session deep scanning mode. The two are complementary defense-in-depth layers.
-- [dsh-sandbox-audit](https://github.com/zoahdev/dsh-sandbox-audit) — static, deterministic sandbox-policy consistency auditing: it covers “is the policy a config claims actually wired up”, this project covers “does the plugin source carry risk”.
+- [dsh-plugin-vet](https://github.com/wulun811/dsh-plugin-vet) —— 安装期的确定性静态规则扫描；本项目补上基于模型的行为审计与会话内深扫模式，两者是互补的纵深防御层。
+- [dsh-sandbox-audit](https://github.com/zoahdev/dsh-sandbox-audit) —— 静态、确定性的沙箱策略一致性审计：它管「配置声称的策略是否真的接线」，本项目管理「插件源码是否有风险」。
 
-## Repository layout
+## 仓库结构
 
 ```
 dsh-code-security/
-├── index.js                  # gate host plugin (zero-dep cordis plugin, row id: dsh-security-gate)
-├── client.js                 # Settings “Security Audit” panel (bilingual)
-├── audit-baseline.json       # triage memory across audit rounds
-├── cordis.patch.yml          # bundle patch (auto-mounted by dsh plugin add)
-├── preset/                   # the Security-Audit-Mode preset tree
-│   ├── agent.cordis.yml      #   preset composition (standard + dsh-security-tools row)
-│   ├── preset.yml            #   preset metadata
-│   ├── skills/dsh-security/  #   DSH adapter entry skill
-│   ├── bundled/              #   upstream payload copy (107 files: skills / references / schemas / scripts / mcp)
-│   └── plugins/dsh-security/index.js  # 5 dsh_security_* tools
-├── docs/                     # gate.en/zh.md detailed gate docs
-├── assets/                   # README images
-└── README.md / README.zh.md
+├── index.js                  # 安全门禁宿主插件（零依赖 cordis 插件，行 id: dsh-security-gate）
+├── client.js                 # 设置页「安全审计」面板（双语）
+├── audit-baseline.json       # 历轮审计甄别记忆
+├── cordis.patch.yml          # bundle 补丁（dsh plugin add 自动挂载）
+├── preset/                   # 「安全审计模式」预设树
+│   ├── agent.cordis.yml      #   预设组合（standard + dsh-security-tools 行）
+│   ├── preset.yml            #   预设元数据
+│   ├── skills/dsh-security/  #   DSH 适配入口技能
+│   ├── bundled/              #   上游载荷拷贝（107 文件：技能 / references / schemas / scripts / mcp）
+│   └── plugins/dsh-security/index.js  # 5 个 dsh_security_* 工具
+├── docs/                     # gate.zh/en.md 门禁详细文档
+├── assets/                   # README 配图
+└── README.md / README.en.md
 ```
 
-A single npm package since **0.2.0**: one artifact carries the gate host plugin, the settings panel, the Security-Audit-Mode preset and the full bundled payload. `package.json` declares `dsh.bundle.patch`, so `dsh plugin add` appends it to the profile bundles layer stack automatically; the preset still goes into `~/.dsh/.agent-presets/` per platform convention (see installation step 2).
+自 **0.2.0** 起为单一 npm 包：一个工件同时携带门禁宿主插件、设置面板、「安全审计模式」预设与完整 bundled 载荷。`package.json` 声明 `dsh.bundle.patch`，`dsh plugin add` 会自动把它追加进 profile bundles 层栈；预设仍按平台规范放入 `~/.dsh/.agent-presets/`（见安装第 2 步）。
 
-## Uninstall
+## 卸载
 
 ```powershell
 # Windows
@@ -199,25 +199,25 @@ dsh plugin --profile web remove @dsh-so/dsh-code-security
 rm -rf ~/.dsh/.agent-presets/dsh-security
 ```
 
-> **Legacy migration**: the old two-package installs `dsh-security-gate` / `dsh-security-tools` are retired — remove them and add this package. The old state dir `<DSH_HOME>/dsh-security` and old cache `<DSH_HOME>/cache/dsh-code-security` can be deleted manually.
+> **旧包迁移**：旧版双包 `dsh-security-gate` / `dsh-security-tools` 已退役，卸载它们后加装本包即完成迁移。旧状态目录 `<DSH_HOME>/dsh-security` 与旧缓存 `<DSH_HOME>/cache/dsh-code-security` 可手动删除。
 
-## Contributing
+## 参与贡献
 
-Issues and PRs are welcome. The single source of truth for gate config fields is `normalizeConfig()` in `index.js`; behaviour changes should update [docs/gate.en.md](docs/gate.en.md) and [docs/gate.zh.md](docs/gate.zh.md) too.
+欢迎提交 Issue 与 PR。门禁配置字段的唯一事实来源是 `index.js` 的 `normalizeConfig()`，改行为请连带更新 [docs/gate.zh.md](docs/gate.zh.md) 与 [docs/gate.en.md](docs/gate.en.md)。
 
-Release flow (single package, Apache-2.0):
+发布流程（单包，Apache-2.0）：
 
 ```bash
-npm version patch        # e.g. 0.2.2 → 0.2.3, commits and tags automatically
+npm version patch        # 例如 0.2.2 → 0.2.3，自动提交 + 打标签
 npm publish
 git push --follow-tags
 ```
 
-## License & naming
+## 许可证与命名
 
-- This project’s structure / wrapper code: Apache-2.0.
-- `preset/bundled/` content copyright OpenAI, Apache-2.0, from [openai/codex-security](https://github.com/openai/codex-security).
-- `Codex` / `Codex Security` are OpenAI trademarks; this project’s public name is **dsh-code-security** and its technical identifiers are neutral (`dsh-security` / `dsh-security-gate`), keeping upstream names only for attribution, the CLI package name (`@openai/codex-security`) and references inside the skills.
+- 本项目结构 / 封装代码：Apache-2.0。
+- `preset/bundled/` 内容版权归 OpenAI，许可证 Apache-2.0，来源 [openai/codex-security](https://github.com/openai/codex-security)。
+- `Codex` / `Codex Security` 为 OpenAI 商标；本项目对外展示名为 **dsh-code-security**，技术标识使用 `dsh-security` / `dsh-security-gate` 等中性名称，仅在上游归属、CLI 包名（`@openai/codex-security`）与技能内引用中保留上游原名。
 
 <p align="center">
   <img src="assets/dshso-logo.svg" width="22" height="22" alt="dsh.so" style="vertical-align: middle">&nbsp;
